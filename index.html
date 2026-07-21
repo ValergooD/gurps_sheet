@@ -477,6 +477,7 @@ details[open] summary::after{content:"−"}
 <div class="toolbar">
   <div class="toolbar-title">GURPS CHARACTER SHEET</div>
   <button id="authBtn" class="auth-btn">Увійти в Google</button>
+  <button id="logoutBtn" class="danger" style="display:none;">Вийти з Google</button>
   <button id="saveBtn" style="display:none;">Зберегти в Drive</button>
   <button id="exportBtn">Експорт JSON</button>
   <label class="file-label">Імпорт JSON<input id="importFile" type="file" accept=".json,application/json"></label>
@@ -691,6 +692,8 @@ details[open] summary::after{content:"−"}
 const CLIENT_ID = '1046799060090-ddfgdlkkf71k1fdesfrhtmbfqu66jo5f.apps.googleusercontent.com'; // <-- ВСТАВ СВІЙ CLIENT ID СЮДИ!
 const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 const DRIVE_FILE_NAME = 'gurps_character_data.json';
+const TOKEN_KEY = 'gurps_drive_token_v1';
+const TOKEN_EXPIRES_KEY = 'gurps_drive_token_expires_v1';
 
 let tokenClient;
 let accessToken = null;
@@ -829,6 +832,12 @@ function apply(){
 // ЛОГІКА GOOGLE DRIVE
 // ==========================================
 
+function isTokenValid() {
+  const expires = localStorage.getItem(TOKEN_EXPIRES_KEY);
+  // Залишаємо запас у 5 хвилин (300000 мс) до реального протухання
+  return expires && (Date.now() < Number(expires) - 300000);
+}
+
 async function findDriveFile() {
   const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FILE_NAME}' and trashed=false`, {
     headers: { 'Authorization': `Bearer ${accessToken}` }
@@ -867,8 +876,21 @@ async function loadFromDrive() {
 
 async function saveToDrive(showMessage = false) {
   if (!accessToken) return;
-  collect();
+
+  // ПЕРЕВІРКА: Чи живий токен?
+  if (!isTokenValid()) {
+    $("#saveStatus").textContent = "Сесія вийшла (1 год). Натисніть 'Увійти в Google'!";
+    $("#saveStatus").style.color = "#ff6b6b"; // Червоний колір для привернення уваги
+    $("#authBtn").style.display = "inline-block";
+    $("#saveBtn").style.display = "none";
+    return; // Зупиняємо збереження, дані залишаються в інтерфейсі
+  }
+  
+  // Повертаємо стандартний колір, якщо все ок
+  $("#saveStatus").style.color = "#d3c293"; 
+
   if (showMessage) $("#saveStatus").textContent = "Зберігаю в Drive...";
+  collect();
 
   const fileContent = JSON.stringify(state);
 
@@ -922,15 +944,42 @@ function scheduleSave(){
 }
 
 window.onload = function () {
+  const savedToken = localStorage.getItem(TOKEN_KEY);
+  const tokenExpires = localStorage.getItem(TOKEN_EXPIRES_KEY);
+
+  // Перевіряємо, чи є токен і чи він ще дійсний
+  if (savedToken && isTokenValid()) {
+    accessToken = savedToken;
+    $("#authBtn").style.display = "none";
+    $("#logoutBtn").style.display = "inline-block";
+    $("#saveBtn").style.display = "inline-block";
+    loadFromDrive();
+  }
+
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
     scope: SCOPES,
     callback: (tokenResponse) => {
       if (tokenResponse && tokenResponse.access_token) {
         accessToken = tokenResponse.access_token;
+        
+        // Зберігаємо токен у localStorage
+        localStorage.setItem(TOKEN_KEY, accessToken);
+        // Google видає expires_in у секундах (зазвичай 3599). 
+        const expiresInMs = Number(tokenResponse.expires_in) * 1000;
+        localStorage.setItem(TOKEN_EXPIRES_KEY, Date.now() + expiresInMs);
+
         $("#authBtn").style.display = "none";
+        $("#logoutBtn").style.display = "inline-block";
         $("#saveBtn").style.display = "inline-block";
-        loadFromDrive();
+        $("#saveStatus").style.color = "#d3c293"; // Скидаємо червоний колір
+        
+        // Якщо у нас вже є ID файлу, значить ми оновили токен посеред гри
+        if (driveFileId) {
+          saveToDrive(true); // Одразу зберігаємо те, що не змогли зберегти раніше
+        } else {
+          loadFromDrive(); // Інакше це перший вхід
+        }
       }
     },
   });
@@ -945,6 +994,19 @@ $("#authBtn").addEventListener("click", () => {
     return;
   }
   tokenClient.requestAccessToken();
+});
+
+$("#logoutBtn").addEventListener("click", () => {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(TOKEN_EXPIRES_KEY);
+  accessToken = null;
+  driveFileId = null;
+  
+  $("#authBtn").style.display = "inline-block";
+  $("#logoutBtn").style.display = "none";
+  $("#saveBtn").style.display = "none";
+  $("#saveStatus").textContent = "Потрібна авторизація";
+  $("#saveStatus").style.color = "#d3c293";
 });
 
 // ==========================================
