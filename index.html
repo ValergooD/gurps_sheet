@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -336,12 +336,12 @@ textarea{resize:vertical;min-height:58px}
 <body>
 <div class="toolbar">
   <div class="title">GURPS CHARACTER SHEET</div>
-  <button id="saveBtn">Сохранить</button>
-  <button id="exportBtn">Экспорт JSON</button>
-  <label class="file-label">Импорт JSON<input id="importFile" type="file" accept=".json,application/json"></label>
-  <button id="printBtn">Печать / PDF</button>
-  <button id="clearBtn" class="danger">Очистить</button>
-  <span id="status" class="status">Автосохранение включено</span>
+  <button id="saveBtn">Зберегти</button>
+  <button id="exportBtn">Експорт JSON</button>
+  <label class="file-label">Імпорт JSON<input id="importFile" type="file" accept=".json,application/json"></label>
+  <button id="printBtn">Друк / PDF</button>
+  <button id="clearBtn" class="danger">Очистити</button>
+  <span id="status" class="status">Автозбереження увімкнено</span>
 </div>
 
 <main class="sheet" id="sheet">
@@ -352,24 +352,24 @@ textarea{resize:vertical;min-height:58px}
     </div>
 
     <div class="identity">
-      <div class="field"><label>Имя</label><input data-key="name" type="text"></div>
-      <div class="field"><label>Игрок</label><input data-key="player" type="text"></div>
+      <div class="field"><label>Ім'я</label><input data-key="name" type="text"></div>
+      <div class="field"><label>Гравець</label><input data-key="player" type="text"></div>
       <div class="field"><label>Раса / вид</label><input data-key="race" type="text"></div>
-      <div class="field"><label>Возраст</label><input data-key="age" type="text"></div>
-      <div class="field"><label>Рост</label><input data-key="height" type="text"></div>
-      <div class="field"><label>Вес</label><input data-key="weight" type="text"></div>
-      <div class="field"><label>Размер (SM)</label><input data-key="sm" type="text" placeholder="0"></div>
+      <div class="field"><label>Вік</label><input data-key="age" type="text"></div>
+      <div class="field"><label>Зріст</label><input data-key="height" type="text"></div>
+      <div class="field"><label>Вага</label><input data-key="weight" type="text"></div>
+      <div class="field"><label>Розмір (SM)</label><input data-key="sm" type="text" placeholder="0"></div>
       <div class="field"><label>TL</label><input data-key="tl" type="text"></div>
-      <div class="field full"><label>Внешность</label><input data-key="appearance" type="text"></div>
-      <div class="field full"><label>Концепт / краткое описание</label><input data-key="concept" type="text"></div>
+      <div class="field full"><label>Зовнішність</label><input data-key="appearance" type="text"></div>
+      <div class="field full"><label>Концепт / короткий опис</label><input data-key="concept" type="text"></div>
     </div>
 
     <div class="portrait" id="portraitBox">
       <img id="portraitImg" alt="Портрет персонажа">
-      <div class="placeholder" id="portraitPlaceholder">Портрет персонажа<br><small>Нажмите «Загрузить»</small></div>
+      <div class="placeholder" id="portraitPlaceholder">Портрет персонажа<br><small>Натисніть «Завантажити»</small></div>
       <div class="portrait-actions">
-        <label>Загрузить<input id="portraitInput" type="file" accept="image/*"></label>
-        <button id="removePortrait" type="button">Убрать</button>
+        <label>Завантажити<input id="portraitInput" type="file" accept="image/*"></label>
+        <button id="removePortrait" type="button">Прибрати</button>
       </div>
     </div>
   </section>
@@ -407,27 +407,27 @@ textarea{resize:vertical;min-height:58px}
           </div>
 
           <div class="points-strip">
-            <div class="point-box"><span class="mini-label">Статы</span><span id="statPoints" class="value">0</span></div>
-            <div class="point-box"><span class="mini-label">Преим.</span><span id="advPoints" class="value">0</span></div>
-            <div class="point-box"><span class="mini-label">Недост.</span><span id="disadvPoints" class="value">0</span></div>
-            <div class="point-box"><span class="mini-label">Навыки</span><span id="skillPoints" class="value">0</span></div>
+            <div class="point-box"><span class="mini-label">Стати</span><span id="statPoints" class="value">0</span></div>
+            <div class="point-box"><span class="mini-label">Перев.</span><span id="advPoints" class="value">0</span></div>
+            <div class="point-box"><span class="mini-label">Недол.</span><span id="disadvPoints" class="value">0</span></div>
+            <div class="point-box"><span class="mini-label">Навички</span><span id="skillPoints" class="value">0</span></div>
           </div>
-          <div class="point-box" style="margin-top:6px"><span class="mini-label">Итого очков</span><span id="totalPoints" class="value">0</span></div>
+          <div class="point-box" style="margin-top:6px"><span class="mini-label">Разом очок</span><span id="totalPoints" class="value">0</span></div>
         </div>
       </div>
 
       <div class="panel">
-        <div class="panel-title">Нагрузка</div>
+        <div class="panel-title">Навантаження</div>
         <div class="panel-body">
           <table class="enc-table">
-            <thead><tr><th>Уровень</th><th>Макс. вес</th><th>Move</th><th>Dodge</th></tr></thead>
+            <thead><tr><th>Рівень</th><th>Макс. вага</th><th>Move</th><th>Dodge</th></tr></thead>
             <tbody id="encumbranceBody"></tbody>
           </table>
         </div>
       </div>
 
       <div class="panel">
-        <div class="panel-title">Защита</div>
+        <div class="panel-title">Захист</div>
         <div class="panel-body">
           <div class="combat-grid">
             <div class="combat-box"><label>Parry</label><input data-key="parry" type="text"></div>
@@ -438,9 +438,9 @@ textarea{resize:vertical;min-height:58px}
             <div class="dr-row"><span>Голова</span><input data-key="drHead" type="text"></div>
             <div class="dr-row"><span>Торс</span><input data-key="drTorso" type="text"></div>
             <div class="dr-row"><span>Руки</span><input data-key="drArms" type="text"></div>
-            <div class="dr-row"><span>Кисти</span><input data-key="drHands" type="text"></div>
+            <div class="dr-row"><span>Кисті</span><input data-key="drHands" type="text"></div>
             <div class="dr-row"><span>Ноги</span><input data-key="drLegs" type="text"></div>
-            <div class="dr-row"><span>Стопы</span><input data-key="drFeet" type="text"></div>
+            <div class="dr-row"><span>Стопи</span><input data-key="drFeet" type="text"></div>
           </div>
         </div>
       </div>
@@ -448,76 +448,76 @@ textarea{resize:vertical;min-height:58px}
 
     <div class="stack">
       <div class="panel">
-        <div class="panel-title">Преимущества и перки</div>
+        <div class="panel-title">Переваги та перки</div>
         <div class="panel-body">
           <div id="advantages" class="list"></div>
-          <button class="add-row" data-add="advantages">+ Добавить преимущество</button>
+          <button class="add-row" data-add="advantages">+ Додати перевагу</button>
         </div>
       </div>
 
       <div class="panel">
-        <div class="panel-title">Недостатки и особенности</div>
+        <div class="panel-title">Недоліки та особливості</div>
         <div class="panel-body">
           <div id="disadvantages" class="list"></div>
-          <button class="add-row" data-add="disadvantages">+ Добавить недостаток</button>
+          <button class="add-row" data-add="disadvantages">+ Додати недолік</button>
         </div>
       </div>
 
       <div class="panel">
-        <div class="panel-title">Реакции и социальные модификаторы</div>
+        <div class="panel-title">Реакції та соціальні модифікаторы</div>
         <div class="panel-body">
           <div class="field"><label>Статус</label><input data-key="statusText" type="text"></div>
-          <div class="field"><label>Репутация</label><input data-key="reputation" type="text"></div>
-          <div class="field"><label>Модификаторы реакции</label><textarea data-key="reactionMods"></textarea></div>
+          <div class="field"><label>Репутація</label><input data-key="reputation" type="text"></div>
+          <div class="field"><label>Модифікатори реакції</label><textarea data-key="reactionMods"></textarea></div>
         </div>
       </div>
 
       <div class="panel">
-        <div class="panel-title">Языки и культурные особенности</div>
+        <div class="panel-title">Мови та культурні особливості</div>
         <div class="panel-body">
-          <div class="field"><label>Языки</label><textarea data-key="languages" placeholder="Язык — разговорный / письменный"></textarea></div>
-          <div class="field"><label>Культурные знакомства</label><textarea data-key="cultures"></textarea></div>
+          <div class="field"><label>Мови</label><textarea data-key="languages" placeholder="Мова — розмовна / письмова"></textarea></div>
+          <div class="field"><label>Культурні знайомства</label><textarea data-key="cultures"></textarea></div>
         </div>
       </div>
     </div>
 
     <div class="stack">
       <div class="panel">
-        <div class="panel-title">Навыки</div>
+        <div class="panel-title">Навички</div>
         <div class="panel-body">
           <div class="list-row skill" style="padding:0 3px 4px;color:var(--muted);font-size:11px;text-transform:uppercase">
-            <span>Название</span><span>Уровень</span><span>Отн. уровень</span><span>Очки</span><span></span>
+            <span>Назва</span><span>Рівень</span><span>Відн. рівень</span><span>Очки</span><span></span>
           </div>
           <div id="skills" class="list"></div>
-          <button class="add-row" data-add="skills">+ Добавить навык</button>
+          <button class="add-row" data-add="skills">+ Додати навичку</button>
         </div>
       </div>
 
       <div class="panel">
-        <div class="panel-title">Атаки и оружие</div>
+        <div class="panel-title">Атаки та зброя</div>
         <div class="panel-body">
-          <div class="field"><label>Ближний бой</label><textarea data-key="meleeAttacks" placeholder="Оружие — навык — урон — reach — parry"></textarea></div>
-          <div class="field"><label>Дальний бой</label><textarea data-key="rangedAttacks" placeholder="Оружие — навык — урон — Acc — дальность — RoF"></textarea></div>
+          <div class="field"><label>Ближній бій</label><textarea data-key="meleeAttacks" placeholder="Зброя — навичка — шкода — reach — parry"></textarea></div>
+          <div class="field"><label>Дальній бій</label><textarea data-key="rangedAttacks" placeholder="Зброя — навичка — шкода — Acc — дальність — RoF"></textarea></div>
         </div>
       </div>
 
       <div class="panel">
-        <div class="panel-title">Состояние</div>
+        <div class="panel-title">Стан</div>
         <div class="panel-body">
           <div class="combat-grid">
-            <div class="combat-box"><label>Текущие HP</label><input data-key="currentHp" type="number"></div>
-            <div class="combat-box"><label>Текущие FP</label><input data-key="currentFp" type="number"></div>
-            <div class="combat-box"><label>Нагрузка</label>
+            <div class="combat-box"><label>Поточні HP</label><input data-key="currentHp" type="number"></div>
+            <div class="combat-box"><label>Поточні FP</label><input data-key="currentFp" type="number"></div>
+            <div class="combat-box"><label>Навантаження</label>
               <select data-key="encLevel">
-                <option value="0">Нет</option>
-                <option value="1">Лёгкая</option>
-                <option value="2">Средняя</option>
-                <option value="3">Тяжёлая</option>
-                <option value="4">Сверхтяжёлая</option>
+                <option value="0">Немає</option>
+                <option value="1">Легке</option>
+                <option value="2">Середнє</option>
+                <option value="3">Важке</option>
+                <option value="4">Надважке</option>
               </select>
             </div>
           </div>
-          <div class="field" style="margin-top:8px"><label>Состояния, эффекты, ранения</label><textarea data-key="conditions"></textarea></div>
+          <div class="field" style="margin-top:8px"><label>Стани, ефекти, поранення</label><textarea data-key="conditions"></textarea></div>
         </div>
       </div>
     </div>
@@ -525,11 +525,11 @@ textarea{resize:vertical;min-height:58px}
 
   <section class="notes-grid">
     <div class="panel big-notes">
-      <div class="panel-title">Снаряжение и имущество</div>
-      <div class="panel-body"><textarea data-key="equipment" placeholder="Предмет — вес — стоимость — заметка"></textarea></div>
+      <div class="panel-title">Спорядження та майно</div>
+      <div class="panel-body"><textarea data-key="equipment" placeholder="Предмет — вага — вартість — замітка"></textarea></div>
     </div>
     <div class="panel big-notes">
-      <div class="panel-title">Заметки персонажа</div>
+      <div class="panel-title">Замітки персонажа</div>
       <div class="panel-body"><textarea data-key="notes"></textarea></div>
     </div>
   </section>
@@ -571,17 +571,17 @@ function renderList(id){
     row.className = "list-row" + (id==="skills" ? " skill" : "");
     if(id==="skills"){
       row.innerHTML = `
-        <input data-list="${id}" data-index="${index}" data-prop="name" value="${escapeHtml(item.name||"")}" placeholder="Навык">
+        <input data-list="${id}" data-index="${index}" data-prop="name" value="${escapeHtml(item.name||"")}" placeholder="Навичка">
         <input data-list="${id}" data-index="${index}" data-prop="level" value="${escapeHtml(item.level||"")}" placeholder="12">
         <input data-list="${id}" data-index="${index}" data-prop="relative" value="${escapeHtml(item.relative||"")}" placeholder="DX+1">
         <input data-list="${id}" data-index="${index}" data-prop="points" type="number" value="${escapeHtml(item.points||"")}" placeholder="0">
-        <button class="remove" data-remove="${id}" data-index="${index}" title="Удалить">×</button>`;
+        <button class="remove" data-remove="${id}" data-index="${index}" title="Видалити">×</button>`;
     }else{
-      const placeholder = id==="advantages" ? "Преимущество / перк" : "Недостаток / особенность";
+      const placeholder = id==="advantages" ? "Перевага / перк" : "Недолік / особливість";
       row.innerHTML = `
         <input data-list="${id}" data-index="${index}" data-prop="name" value="${escapeHtml(item.name||"")}" placeholder="${placeholder}">
         <input data-list="${id}" data-index="${index}" data-prop="points" type="number" value="${escapeHtml(item.points||"")}" placeholder="0">
-        <button class="remove" data-remove="${id}" data-index="${index}" title="Удалить">×</button>`;
+        <button class="remove" data-remove="${id}" data-index="${index}" title="Видалити">×</button>`;
     }
     box.appendChild(row);
   });
@@ -636,11 +636,11 @@ function calc(){
   $("#totalPoints").textContent = statPoints + adv + disadv + skills;
 
   const enc = [
-    ["Нет",1,1,0],
-    ["Лёгкая",2,.8,1],
-    ["Средняя",3,.6,2],
-    ["Тяжёлая",6,.4,3],
-    ["Сверхтяжёлая",10,.2,4]
+    ["Немає",1,1,0],
+    ["Легке",2,.8,1],
+    ["Середнє",3,.6,2],
+    ["Важке",6,.4,3],
+    ["Надважке",10,.2,4]
   ];
   $("#encumbranceBody").innerHTML = enc.map(([name,mult,moveMult,pen])=>{
     const m = Math.max(1,Math.floor(move*moveMult));
@@ -667,15 +667,15 @@ function save(silent=false){
   localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
   if(!silent){
     const s=$("#status");
-    s.textContent="Сохранено";
+    s.textContent="Збережено";
     s.classList.remove("saved-flash"); void s.offsetWidth; s.classList.add("saved-flash");
   }
 }
 function scheduleSave(){
   clearTimeout(saveTimer);
   saveTimer=setTimeout(()=>save(true),350);
-  $("#status").textContent="Сохраняю…";
-  setTimeout(()=>$("#status").textContent="Автосохранение включено",600);
+  $("#status").textContent="Зберігаю…";
+  setTimeout(()=>$("#status").textContent="Автозбереження увімкнено",600);
 }
 function setPortrait(src){
   state.portrait=src||"";
@@ -722,7 +722,7 @@ $("#portraitInput").addEventListener("change",e=>{
   const file=e.target.files[0];
   if(!file)return;
   if(file.size>4*1024*1024){
-    alert("Лучше использовать изображение до 4 МБ.");
+    alert("Краще використовувати зображення до 4 МБ.");
     return;
   }
   const reader=new FileReader();
@@ -754,13 +754,13 @@ $("#importFile").addEventListener("change",e=>{
       state.lists=data.lists||state.lists;
       state.portrait=data.portrait||"";
       apply();save(false);
-    }catch(err){alert("Не удалось прочитать JSON-файл.");}
+    }catch(err){alert("Не вдалося прочитати JSON-файл.");}
   };
   reader.readAsText(file);
 });
 
 $("#clearBtn").addEventListener("click",()=>{
-  if(!confirm("Очистить весь лист персонажа?"))return;
+  if(!confirm("Очистити весь лист персонажа?"))return;
   localStorage.removeItem(STORAGE_KEY);
   location.reload();
 });
