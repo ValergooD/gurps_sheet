@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GURPS OPFS Character Sheet</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f9; }
+        h1, h2 { color: #333; }
+        .section { background: white; padding: 15px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+        label { display: block; font-size: 0.9em; margin-bottom: 3px; font-weight: bold; }
+        input[type="text"], input[type="number"] { width: 100%; padding: 5px; box-sizing: border-box; }
+        .row { display: flex; gap: 10px; margin-bottom: 5px; align-items: center; }
+        .row > * { flex: 1; }
+        button { padding: 8px 12px; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 4px; }
+        button:hover { background: #004494; }
+        #totalPoints { font-size: 1.2em; font-weight: bold; color: #b30000; }
+    </style>
+</head>
+<body>
+
+    <h1>Лист персонажа GURPS (OPFS)</h1>
+    <div class="section">
+        <span>Загальна кількість витрачених очок: </span>
+        <span id="totalPoints">0</span>
+        <button onclick="exportData()" style="float: right;">Скачати все (JSON)</button>
+    </div>
+
+    <div class="section" id="statsSection">
+        <h2>Характеристики (Stats)</h2>
+        <div class="grid" id="statsGrid"></div>
+    </div>
+
+    <div class="section" id="traitsSection">
+        <h2>Переваги та Недоліки (Traits)</h2>
+        <div id="traitsList"></div>
+        <button onclick="addItem('traits')">+ Додати</button>
+    </div>
+
+    <div class="section" id="skillsSection">
+        <h2>Навички (Skills)</h2>
+        <div id="skillsList"></div>
+        <button onclick="addItem('skills')">+ Додати</button>
+    </div>
+    
+    <div class="section" id="spellsSection">
+        <h2>Закляття (Spells)</h2>
+        <div id="spellsList"></div>
+        <button onclick="addItem('spells')">+ Додати</button>
+    </div>
+
+    <div class="section" id="inventorySection">
+        <h2>Інвентар (Inventory)</h2>
+        <div id="inventoryList"></div>
+        <button onclick="addItem('inventory')">+ Додати</button>
+    </div>
+
+<script>
+// Дефолтні дані для ініціалізації
+const defaultData = {
+    stats: {
+        ST: { val: 10, pts: 0 },
+        DX: { val: 14, pts: 80 },
+        IQ: { val: 10, pts: 0 },
+        HT: { val: 12, pts: 20 }
+    },
+    traits: [
+        { name: "Ambidexterity", pts: 5 },
+        { name: "Combat Reflexes", pts: 15 },
+        { name: "Overconfidence", pts: -5 }
+    ],
+    skills: [
+        { name: "Broadsword", level: 16, diff: "DX/A", pts: 8 },
+        { name: "Dual-Weapon Attack (Broadsword)", level: 16, diff: "Tech", pts: 5 },
+        { name: "Tactics", level: 12, diff: "IQ/H", pts: 4 }
+    ],
+    spells: [],
+    inventory: [
+        { name: "Broadsword (Thrusting)", qty: 2, weight: 3 }
+    ]
+};
+
+let appData = {};
+let opfsRoot;
+
+async function initOPFS() {
+    try {
+        opfsRoot = await navigator.storage.getDirectory();
+        await loadAllFiles();
+        renderAll();
+        calculatePoints();
+    } catch (e) {
+        alert("Помилка доступу до OPFS. Переконайся, що сторінка відкрита через localhost або HTTPS.");
+        console.error(e);
+    }
+}
+
+async function loadFile(filename, fallback) {
+    try {
+        const fileHandle = await opfsRoot.getFileHandle(filename, { create: true });
+        const file = await fileHandle.getFile();
+        const text = await file.text();
+        return text ? JSON.parse(text) : fallback;
+    } catch (e) {
+        return fallback;
+    }
+}
+
+async function saveFile(filename, data) {
+    const fileHandle = await opfsRoot.getFileHandle(filename, { create: true });
+    const writable = await fileHandle.createWritable();
+    await writable.write(JSON.stringify(data, null, 2));
+    await writable.close();
+}
+
+async function loadAllFiles() {
+    appData.stats = await loadFile('stats.json', defaultData.stats);
+    appData.traits = await loadFile('traits.json', defaultData.traits);
+    appData.skills = await loadFile('skills.json', defaultData.skills);
+    appData.spells = await loadFile('spells.json', defaultData.spells);
+    appData.inventory = await loadFile('inventory.json', defaultData.inventory);
+}
+
+async function saveAllFiles() {
+    await saveFile('stats.json', appData.stats);
+    await saveFile('traits.json', appData.traits);
+    await saveFile('skills.json', appData.skills);
+    await saveFile('spells.json', appData.spells);
+    await saveFile('inventory.json', appData.inventory);
+    calculatePoints();
+}
+
+function calculatePoints() {
+    let total = 0;
+    // Stats points
+    for (const key in appData.stats) {
+        total += Number(appData.stats[key].pts) || 0;
+    }
+    // Lists points
+    ['traits', 'skills', 'spells'].forEach(category => {
+        appData[category].forEach(item => {
+            total += Number(item.pts) || 0;
+        });
+    });
+    document.getElementById('totalPoints').innerText = total;
+}
+
+function renderAll() {
+    // Render Stats
+    const statsHtml = Object.keys(appData.stats).map(key => `
+        <div>
+            <label>${key} (Рівень / Очки)</label>
+            <div style="display:flex; gap:5px;">
+                <input type="number" value="${appData.stats[key].val}" onchange="updateStat('${key}', 'val', this.value)">
+                <input type="number" value="${appData.stats[key].pts}" onchange="updateStat('${key}', 'pts', this.value)">
+            </div>
+        </div>
+    `).join('');
+    document.getElementById('statsGrid').innerHTML = statsHtml;
+
+    // Render Lists
+    renderList('traits', ['name', 'pts'], ['Назва (Перевага/Недолік)', 'Очки']);
+    renderList('skills', ['name', 'level', 'diff', 'pts'], ['Назва навички', 'Рівень', 'Складність', 'Очки']);
+    renderList('spells', ['name', 'level', 'pts'], ['Назва закляття', 'Рівень', 'Очки']);
+    renderList('inventory', ['name', 'qty', 'weight'], ['Предмет', 'Кіл-ть', 'Вага']);
+}
+
+function renderList(category, fields, placeholders) {
+    const container = document.getElementById(`${category}List`);
+    container.innerHTML = appData[category].map((item, index) => {
+        const inputs = fields.map((f, i) => 
+            `<input type="${f==='pts'||f==='qty'||f==='weight'||f==='level'?'number':'text'}" 
+             value="${item[f] || ''}" placeholder="${placeholders[i]}" 
+             onchange="updateItem('${category}', ${index}, '${f}', this.value)">`
+        ).join('');
+        return `<div class="row">${inputs} <button onclick="removeItem('${category}', ${index})">X</button></div>`;
+    }).join('');
+}
+
+// Handlers
+function updateStat(stat, field, value) {
+    appData.stats[stat][field] = Number(value);
+    saveAllFiles();
+}
+
+function updateItem(category, index, field, value) {
+    appData[category][index][field] = (field === 'name' || field === 'diff') ? value : Number(value);
+    saveAllFiles();
+}
+
+function addItem(category) {
+    let newItem = {};
+    if (category === 'traits') newItem = { name: "", pts: 0 };
+    if (category === 'skills') newItem = { name: "", level: 10, diff: "", pts: 1 };
+    if (category === 'spells') newItem = { name: "", level: 10, pts: 1 };
+    if (category === 'inventory') newItem = { name: "", qty: 1, weight: 0 };
+    
+    appData[category].push(newItem);
+    renderAll();
+    saveAllFiles();
+}
+
+function removeItem(category, index) {
+    appData[category].splice(index, 1);
+    renderAll();
+    saveAllFiles();
+}
+
+async function exportData() {
+    await loadAllFiles(); // Оновлюємо дані перед склеюванням
+    const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'gurps_character.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// Старт
+window.onload = initOPFS;
+</script>
+
+</body>
+</html>
