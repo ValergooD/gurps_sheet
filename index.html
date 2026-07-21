@@ -3,108 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GURPS — Лист персонажа</title>
+<title>GURPS — Аркуш персонажа</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{
-  --bg:#e8e3d7;
-  --paper:#fffdf6;
-  --ink:#242424;
-  --muted:#6f6a60;
-  --line:#383838;
-  --soft:#d8d1c2;
-  --gold:#a87912;
-  --gold-soft:#f1e2b0;
-  --red:#9b2f2f;
-  --shadow:0 16px 50px rgba(45,35,20,.16);
+  --paper:#fffdf7;
+  --bg:#e8e3d8;
+  --ink:#252525;
+  --muted:#716b61;
+  --line:#3c3a36;
+  --soft:#d7d0c3;
+  --gold:#9f7417;
+  --red:#8d3030;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
 body{
   margin:0;
   color:var(--ink);
-  background:
-    radial-gradient(circle at 15% 0%,rgba(255,255,255,.75),transparent 32%),
-    linear-gradient(135deg,#dcd5c7,#f1eee6);
-  font:14px/1.35 Georgia,"Times New Roman",serif;
+  background:linear-gradient(135deg,#ddd6c8,#f1eee7);
+  font:14px/1.3 Georgia,"Times New Roman",serif;
 }
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
 .toolbar{
-  position:sticky;top:0;z-index:50;
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-  padding:10px 16px;
+  position:sticky;
+  top:0;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex-wrap:wrap;
+  padding:8px 14px;
   color:#fff;
-  background:rgba(34,31,27,.96);
-  box-shadow:0 4px 16px rgba(0,0,0,.2);
-  backdrop-filter:blur(8px);
+  background:rgba(31,29,26,.96);
+  box-shadow:0 3px 12px rgba(0,0,0,.22);
 }
-.toolbar .title{
+.toolbar-title{
   margin-right:auto;
+  color:#e7ca73;
   font-weight:700;
-  letter-spacing:.06em;
-  color:#f1d37b;
+  letter-spacing:.07em;
 }
 .toolbar button,.file-label{
-  border:1px solid #7c735f;
-  border-radius:6px;
-  padding:7px 10px;
-  background:#3b3731;
+  padding:6px 9px;
+  border:1px solid #756d5f;
+  border-radius:5px;
   color:#fff;
+  background:#3c3832;
 }
-.toolbar button:hover,.file-label:hover{background:#50493f}
-.toolbar .danger:hover{background:#733030}
+.toolbar button:hover,.file-label:hover{background:#514b42}
+.toolbar .danger:hover{background:#713232}
+.toolbar .auth-btn{background:#4285F4;border-color:#357AE8}
+.toolbar .auth-btn:hover{background:#357AE8}
 .file-label input{display:none}
+.status{font-size:12px;color:#d3c293}
 
 .sheet{
-  width:min(1440px,calc(100% - 28px));
-  margin:22px auto 40px;
-  padding:22px;
+  width:min(1220px,calc(100% - 24px));
+  margin:16px auto 34px;
+  padding:14px;
+  border:1px solid #b9b1a3;
   background:var(--paper);
-  border:1px solid #b8af9f;
-  box-shadow:var(--shadow);
+  box-shadow:0 14px 42px rgba(43,34,21,.14);
 }
-.header{
+.topline{
   display:grid;
-  grid-template-columns:250px 1fr 220px;
-  gap:16px;
-  align-items:stretch;
-  margin-bottom:14px;
+  grid-template-columns:140px minmax(220px,1fr) 180px minmax(110px,150px);
+  gap:10px;
+  align-items:end;
+  margin-bottom:10px;
 }
-.brand{
-  display:flex;flex-direction:column;justify-content:center;
-  min-height:125px;
-  padding:16px;
-  border:3px solid var(--gold);
-  border-radius:14px 4px 14px 4px;
-  background:linear-gradient(145deg,#252b2a,#4e5751);
-  color:#f6d66d;
-  text-align:center;
-  text-shadow:0 2px 0 #000;
-}
-.brand strong{font-size:38px;line-height:1;letter-spacing:.03em}
-.brand span{margin-top:9px;color:#fff;font-size:16px;letter-spacing:.08em}
-
-.identity{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:9px 12px;
-  align-content:start;
-}
-.field{display:flex;flex-direction:column;gap:3px}
-.field.full{grid-column:1/-1}
-label,.mini-label{
-  color:var(--muted);
-  font-size:11px;
+.sheet-name{
+  padding-bottom:5px;
+  color:var(--gold);
+  font-size:18px;
   font-weight:700;
-  letter-spacing:.06em;
+  letter-spacing:.04em;
+}
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+label,.tiny{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.055em;
   text-transform:uppercase;
 }
-input[type="text"],input[type="number"],textarea,select{
+input,textarea,select{
   width:100%;
+  min-width:0;
+  padding:4px 3px;
   border:0;
-  border-bottom:1px solid #777;
+  border-bottom:1px solid #888176;
   border-radius:0;
-  padding:5px 4px;
   color:var(--ink);
   background:transparent;
   outline:none;
@@ -113,430 +107,597 @@ input:focus,textarea:focus,select:focus{
   border-bottom-color:var(--gold);
   box-shadow:0 1px 0 var(--gold);
 }
-textarea{resize:vertical;min-height:58px}
+textarea{resize:vertical}
 
-.portrait{
-  position:relative;
-  min-height:210px;
+.total-points{
+  min-height:48px;
+  padding:5px 9px;
   border:2px solid var(--line);
-  overflow:hidden;
-  background:
-    linear-gradient(45deg,#f4f0e6 25%,transparent 25%) 0 0/18px 18px,
-    linear-gradient(-45deg,#f4f0e6 25%,transparent 25%) 0 0/18px 18px,
-    linear-gradient(45deg,transparent 75%,#f4f0e6 75%) 0 0/18px 18px,
-    linear-gradient(-45deg,transparent 75%,#f4f0e6 75%) 0 0/18px 18px;
-}
-.portrait img{
-  width:100%;height:100%;min-height:210px;object-fit:cover;display:none;
-}
-.portrait .placeholder{
-  position:absolute;inset:0;
-  display:grid;place-items:center;
-  padding:20px;text-align:center;
-  color:var(--muted);
-}
-.portrait .portrait-actions{
-  position:absolute;right:6px;bottom:6px;
-  display:flex;gap:5px;
-}
-.portrait button,.portrait label{
-  border:1px solid rgba(255,255,255,.65);
-  border-radius:5px;
-  padding:5px 7px;
-  color:#fff;background:rgba(0,0,0,.62);
-  text-transform:none;letter-spacing:0;font-size:12px;
-}
-.portrait input{display:none}
-
-.main-grid{
-  display:grid;
-  grid-template-columns:310px minmax(0,1fr) minmax(360px,1fr);
-  gap:12px;
-}
-.panel{
-  border:2px solid var(--line);
-  background:rgba(255,255,255,.35);
-}
-.panel-title{
-  padding:5px 8px;
-  border-bottom:1px solid var(--line);
-  background:linear-gradient(#faf7ef,#eee7d8);
-  font-weight:700;
   text-align:center;
-  text-transform:uppercase;
-  letter-spacing:.055em;
+  background:#f5eedc;
 }
-.panel-body{padding:8px}
-
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.stat{
-  display:grid;
-  grid-template-columns:40px 1fr 42px;
-  align-items:center;
-  min-height:54px;
-  border-bottom:1px solid var(--soft);
-}
-.stat b{font-size:26px}
-.stat input{
-  height:44px;
-  border:1px solid var(--line);
-  font-size:25px;
-  text-align:center;
-}
-.stat .cost{padding-left:7px;color:var(--muted);text-align:right}
-
-.derived{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:7px;
-  margin-top:9px;
-}
-.derived .box{
-  border:1px solid var(--line);
-  padding:6px;
-  min-height:54px;
-}
-.value{
+.total-points strong{
   display:block;
-  margin-top:3px;
-  font:700 21px/1.1 Arial,sans-serif;
+  margin-top:1px;
+  font:700 26px/1 Arial,sans-serif;
 }
-.damage-row{
+
+.hero-row{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:7px;
-  margin-top:7px;
+  grid-template-columns:minmax(510px,1.7fr) minmax(190px,.62fr) 210px;
+  gap:10px;
+  align-items:start;
 }
-.damage-row .field{border:1px solid var(--line);padding:5px}
-.damage-row input{font-size:18px;text-align:center}
-
-.enc-table,.skills-table,.simple-table,.attacks-table{
-  width:100%;
-  border-collapse:collapse;
+.block{
+  border:1.5px solid var(--line);
+  background:rgba(255,255,255,.34);
 }
-.enc-table th,.enc-table td,
-.skills-table th,.skills-table td,
-.simple-table th,.simple-table td,
-.attacks-table th,.attacks-table td{
-  border-bottom:1px solid var(--soft);
-  padding:4px;
-  vertical-align:middle;
-}
-.enc-table th,.skills-table th,.simple-table th,.attacks-table th{
-  color:var(--muted);
+.block-title{
+  position:relative;
+  padding:4px 30px 4px 7px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(#faf7ef,#eee7d9);
+  text-align:center;
   font-size:11px;
+  font-weight:700;
+  letter-spacing:.06em;
   text-transform:uppercase;
-  letter-spacing:.04em;
 }
-.enc-table td:not(:first-child){text-align:center}
+.block-body{padding:7px}
+.block.collapsed .block-body{display:none}
+.collapse-btn{
+  position:absolute;
+  top:50%;
+  right:5px;
+  transform:translateY(-50%);
+  width:20px;
+  height:20px;
+  border:1px solid #8c836f;
+  border-radius:4px;
+  padding:0;
+  color:#4b453a;
+  background:#f7f1e2;
+  font:700 15px/18px Arial,sans-serif;
+}
+.collapse-btn:hover{background:#ece2c4}
+.block.collapsed .collapse-btn{line-height:16px}
 
-.points-strip{
+.stat-pairs{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.stat-pair{
+  display:grid;
+  grid-template-columns:38px 66px 42px 52px 66px 66px 42px;
+  gap:4px;
+  align-items:center;
+  min-height:41px;
+}
+.stat-label{
+  font:700 20px/1 Arial,sans-serif;
+  text-align:center;
+}
+.stat-value,
+.stat-current{
+  height:37px;
+  border:1px solid var(--line);
+  font:700 21px/1 Arial,sans-serif;
+  text-align:center;
+}
+.stat-current-wrap{
+  position:relative;
+}
+.stat-current-wrap::before{
+  content:"пот.";
+  position:absolute;
+  top:-11px;
+  left:0;
+  right:0;
+  color:var(--muted);
+  font:8px/1 Arial,sans-serif;
+  text-align:center;
+  text-transform:uppercase;
+}
+.stat-current-spacer{
+  height:37px;
+}
+.stat-cost{
+  color:var(--muted);
+  font:11px/1 Arial,sans-serif;
+  text-align:center;
+}
+.derived-row{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:6px;
-  margin-top:8px;
+  gap:5px;
+  margin-top:7px;
 }
-.point-box{
-  border:1px solid var(--line);
-  padding:6px;
+.derived{
+  min-width:0;
+  padding:5px;
+  border:1px solid var(--soft);
   text-align:center;
 }
-.point-box .value{font-size:18px}
+.derived strong{
+  display:block;
+  margin-top:2px;
+  font:700 18px/1 Arial,sans-serif;
+}
+.damage{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:5px;
+  margin-top:6px;
+}
+.damage .field{
+  display:grid;
+  grid-template-columns:44px 1fr;
+  align-items:center;
+}
+.damage input{text-align:center;font-weight:700}
 
+.defense-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+}
+.defense{
+  padding:5px;
+  border:1px solid var(--line);
+  text-align:center;
+}
+.defense input{
+  font:700 19px/1 Arial,sans-serif;
+  text-align:center;
+}
+.dr-grid{
+  display:grid;
+  grid-template-columns:1fr 55px;
+  gap:3px 6px;
+  align-items:center;
+  margin-top:7px;
+}
+.dr-grid input{text-align:center}
+.condition-mini{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:5px;
+  margin-top:7px;
+}
+.condition-mini input{text-align:center}
+
+.portrait-card{
+  min-width:0;
+}
+.portrait-card .block-body{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+.portrait{
+  position:relative;
+  min-height:215px;
+  flex:1;
+  overflow:hidden;
+  border:1.5px solid var(--line);
+  background:
+    linear-gradient(45deg,#f1ece1 25%,transparent 25%) 0 0/16px 16px,
+    linear-gradient(-45deg,#f1ece1 25%,transparent 25%) 0 0/16px 16px,
+    linear-gradient(45deg,transparent 75%,#f1ece1 75%) 0 0/16px 16px,
+    linear-gradient(-45deg,transparent 75%,#f1ece1 75%) 0 0/16px 16px;
+}
+.portrait img{
+  display:none;
+  width:100%;
+  height:100%;
+  min-height:215px;
+  object-fit:cover;
+}
+.portrait-placeholder{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding:18px;
+  color:var(--muted);
+  text-align:center;
+}
+.portrait-actions{
+  position:absolute;
+  right:5px;
+  bottom:5px;
+  display:flex;
+  gap:4px;
+}
+.portrait-actions button,.portrait-actions label{
+  padding:4px 6px;
+  border:1px solid rgba(255,255,255,.65);
+  border-radius:4px;
+  color:#fff;
+  background:rgba(0,0,0,.64);
+  font-size:11px;
+  letter-spacing:0;
+  text-transform:none;
+}
+.portrait-actions input{display:none}
+.bio-mini{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:5px 7px;
+}
+.bio-mini .race{grid-column:1/-1}
+
+.content-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:10px;
+  margin-top:10px;
+}
+.stack{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
 .list{
   display:flex;
   flex-direction:column;
-  gap:3px;
+  gap:2px;
 }
 .list-row{
   display:grid;
-  grid-template-columns:minmax(0,1fr) 62px 28px;
-  gap:5px;
+  grid-template-columns:minmax(0,1fr) 55px 25px;
+  gap:4px;
   align-items:center;
 }
 .list-row.skill{
-  grid-template-columns:minmax(0,1fr) 58px 82px 56px 28px;
+  grid-template-columns:minmax(0,1fr) 50px 72px 48px 25px;
 }
-.list-row input{border-bottom:1px solid #aaa;padding:4px}
+.list-row input{padding:3px}
 .remove{
-  width:26px;height:26px;border:0;border-radius:50%;
-  color:#8a2727;background:transparent;font:bold 18px/1 Arial;
+  width:24px;
+  height:24px;
+  border:0;
+  border-radius:50%;
+  color:var(--red);
+  background:transparent;
+  font:bold 17px/1 Arial;
 }
-.remove:hover{background:#f1d8d8}
+.remove:hover{background:#f0d9d9}
 .add-row{
   width:100%;
-  margin-top:7px;
-  border:1px dashed #9b927f;
-  padding:6px;
-  color:#665e50;background:#faf7ef;
+  margin-top:5px;
+  padding:5px;
+  border:1px dashed #9d9588;
+  color:#625b50;
+  background:#faf7ef;
 }
-.add-row:hover{background:#f2ebdc}
+.add-row:hover{background:#f1ebdf}
 
-.stack{display:flex;flex-direction:column;gap:12px}
-.combat-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:7px;
-}
-.combat-box{
-  border:1px solid var(--line);
-  padding:7px;
-  text-align:center;
-}
-.combat-box input{font-size:22px;text-align:center}
-.dr-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:5px 10px;
-}
-.dr-row{display:grid;grid-template-columns:1fr 60px;gap:6px;align-items:center}
-.dr-row input{text-align:center}
-
-.notes-grid{
+.small-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin-top:12px;
+  gap:8px;
 }
-.big-notes textarea{min-height:170px}
+.compact-textarea{min-height:78px}
+.equipment{min-height:126px}
 
-.status{
-  margin-left:4px;
-  color:#d8c79a;
-  font-size:12px;
+.enc-table{
+  width:100%;
+  border-collapse:collapse;
 }
-.saved-flash{animation:flash .6s}
-@keyframes flash{50%{color:#fff}}
+.enc-table th,.enc-table td{
+  padding:3px 4px;
+  border-bottom:1px solid var(--soft);
+  text-align:center;
+}
+.enc-table th{
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+}
+.enc-table td:first-child{text-align:left}
 
-@media(max-width:1100px){
-  .header{grid-template-columns:220px 1fr}
-  .portrait{grid-column:1/-1;min-height:260px}
-  .portrait img{min-height:260px}
-  .main-grid{grid-template-columns:1fr 1fr}
-  .main-grid>.stack:last-child{grid-column:1/-1}
+details{
+  margin-top:10px;
+  border:1.5px solid var(--line);
+  background:rgba(255,255,255,.34);
 }
-@media(max-width:760px){
-  .sheet{width:100%;margin:0;padding:10px;border:0}
-  .header,.main-grid,.notes-grid{grid-template-columns:1fr}
-  .identity{grid-template-columns:1fr}
-  .portrait{grid-column:auto}
-  .main-grid>.stack:last-child{grid-column:auto}
+summary{
+  position:relative;
+  padding:7px 34px 7px 10px;
+  cursor:pointer;
+  list-style:none;
+  background:linear-gradient(#faf7ef,#eee7d9);
+  font-weight:700;
+  letter-spacing:.055em;
+  text-transform:uppercase;
+}
+summary::-webkit-details-marker{display:none}
+summary::after{
+  content:"＋";
+  position:absolute;
+  top:50%;
+  right:8px;
+  transform:translateY(-50%);
+  width:20px;
+  height:20px;
+  border:1px solid #8c836f;
+  border-radius:4px;
+  color:#4b453a;
+  background:#f7f1e2;
+  font:700 15px/18px Arial,sans-serif;
+  text-align:center;
+}
+details[open] summary::after{content:"−"}
+.journal-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  padding:9px;
+}
+.journal-grid .journal{grid-column:1/-1}
+.journal-grid textarea{min-height:125px}
+.journal textarea{min-height:210px}
+
+@media(max-width:1000px){
+  .topline{grid-template-columns:110px 1fr 150px 120px}
+  .hero-row{grid-template-columns:1fr 220px}
+  .hero-row>.block:nth-child(2){grid-column:1}
+  .portrait-card{grid-column:2;grid-row:auto}
+  .stat-pair{grid-template-columns:34px 58px 38px 48px 58px 58px 38px}
+  .derived-row{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:720px){
+  .sheet{width:100%;margin:0;padding:8px;border:0}
   .toolbar{position:static}
-  .list-row.skill{grid-template-columns:minmax(0,1fr) 50px 65px 48px 26px}
+  .topline,.hero-row,.content-grid,.journal-grid{grid-template-columns:1fr}
+  .sheet-name{display:none}
+  .portrait-card{grid-column:auto;grid-row:auto}
+  .portrait{min-height:280px}
+  .portrait img{min-height:280px}
+  .stat-pair{
+    grid-template-columns:34px minmax(48px,1fr) 36px 45px minmax(48px,1fr) minmax(48px,1fr) 36px;
+    gap:3px;
+  }
+  .stat-label{font-size:17px}
+  .derived-row{grid-template-columns:repeat(2,1fr)}
+  .list-row.skill{grid-template-columns:minmax(0,1fr) 45px 62px 43px 24px}
+  .journal-grid .journal{grid-column:auto}
 }
 @media print{
   body{background:#fff}
   .toolbar,.add-row,.remove,.portrait-actions{display:none!important}
-  .sheet{width:100%;margin:0;padding:8mm;border:0;box-shadow:none}
-  .panel{break-inside:avoid}
-  input,textarea{border-bottom:1px solid #777!important}
+  .sheet{width:100%;margin:0;padding:5mm;border:0;box-shadow:none}
+  .block,details{break-inside:avoid}
 }
 </style>
 </head>
 <body>
 <div class="toolbar">
-  <div class="title">GURPS CHARACTER SHEET</div>
-  <button id="saveBtn">Зберегти</button>
+  <div class="toolbar-title">GURPS CHARACTER SHEET</div>
+  <button id="authBtn" class="auth-btn">Увійти в Google</button>
+  <button id="saveBtn" style="display:none;">Зберегти в Drive</button>
   <button id="exportBtn">Експорт JSON</button>
   <label class="file-label">Імпорт JSON<input id="importFile" type="file" accept=".json,application/json"></label>
   <button id="printBtn">Друк / PDF</button>
   <button id="clearBtn" class="danger">Очистити</button>
-  <span id="status" class="status">Автозбереження увімкнено</span>
+  <span id="saveStatus" class="status">Потрібна авторизація</span>
 </div>
 
-<main class="sheet" id="sheet">
-  <section class="header">
-    <div class="brand">
-      <strong>GURPS</strong>
-      <span>ЛИСТ ПЕРСОНАЖА</span>
+<main class="sheet">
+  <section class="topline">
+    <div class="sheet-name">GURPS · персонаж</div>
+    <div class="field"><label>Ім'я персонажа</label><input data-key="name" type="text"></div>
+    <div class="field"><label>Гравець</label><input data-key="player" type="text"></div>
+    <div class="total-points">
+      <span class="tiny">Підсумкові очки</span>
+      <strong id="totalPoints">0</strong>
+    </div>
+  </section>
+
+  <section class="hero-row">
+    <div class="block">
+      <div class="block-title">Характеристики</div>
+      <div class="block-body">
+        <div class="stat-pairs">
+          <div class="stat-pair">
+            <span class="stat-label">ST</span>
+            <input class="stat-value" data-key="st" type="number" value="10">
+            <span id="stCost" class="stat-cost">[0]</span>
+            <span class="stat-label">HP</span>
+            <input class="stat-value" data-key="hp" type="number" value="10" title="Максимальні HP">
+            <span class="stat-current-wrap"><input class="stat-current" data-key="currentHp" type="number" title="Поточні HP"></span>
+            <span id="hpCost" class="stat-cost">[0]</span>
+          </div>
+
+          <div class="stat-pair">
+            <span class="stat-label">DX</span>
+            <input class="stat-value" data-key="dx" type="number" value="10">
+            <span id="dxCost" class="stat-cost">[0]</span>
+            <span class="stat-label">Will</span>
+            <input class="stat-value" data-key="will" type="number" value="10">
+            <span class="stat-current-spacer"></span>
+            <span id="willCost" class="stat-cost">[0]</span>
+          </div>
+
+          <div class="stat-pair">
+            <span class="stat-label">IQ</span>
+            <input class="stat-value" data-key="iq" type="number" value="10">
+            <span id="iqCost" class="stat-cost">[0]</span>
+            <span class="stat-label">Per</span>
+            <input class="stat-value" data-key="per" type="number" value="10">
+            <span class="stat-current-spacer"></span>
+            <span id="perCost" class="stat-cost">[0]</span>
+          </div>
+
+          <div class="stat-pair">
+            <span class="stat-label">HT</span>
+            <input class="stat-value" data-key="ht" type="number" value="10">
+            <span id="htCost" class="stat-cost">[0]</span>
+            <span class="stat-label">FP</span>
+            <input class="stat-value" data-key="fp" type="number" value="10" title="Максимальні FP">
+            <span class="stat-current-wrap"><input class="stat-current" data-key="currentFp" type="number" title="Поточні FP"></span>
+            <span id="fpCost" class="stat-cost">[0]</span>
+          </div>
+        </div>
+
+        <div class="derived-row">
+          <div class="derived"><span class="tiny">Basic Lift</span><strong id="basicLift">20</strong></div>
+          <div class="derived"><span class="tiny">Basic Speed</span><strong id="basicSpeed">5.00</strong></div>
+          <div class="derived"><span class="tiny">Basic Move</span><strong id="basicMove">5</strong></div>
+          <div class="derived"><span class="tiny">Dodge</span><strong id="dodge">8</strong></div>
+        </div>
+
+        <div class="damage">
+          <div class="field"><label>Thr</label><input data-key="thr" type="text" placeholder="1d-2"></div>
+          <div class="field"><label>Sw</label><input data-key="sw" type="text" placeholder="1d"></div>
+        </div>
+      </div>
     </div>
 
-    <div class="identity">
-      <div class="field"><label>Ім'я</label><input data-key="name" type="text"></div>
-      <div class="field"><label>Гравець</label><input data-key="player" type="text"></div>
-      <div class="field"><label>Раса / вид</label><input data-key="race" type="text"></div>
-      <div class="field"><label>Вік</label><input data-key="age" type="text"></div>
-      <div class="field"><label>Зріст</label><input data-key="height" type="text"></div>
-      <div class="field"><label>Вага</label><input data-key="weight" type="text"></div>
-      <div class="field"><label>Розмір (SM)</label><input data-key="sm" type="text" placeholder="0"></div>
-      <div class="field"><label>TL</label><input data-key="tl" type="text"></div>
-      <div class="field full"><label>Зовнішність</label><input data-key="appearance" type="text"></div>
-      <div class="field full"><label>Концепт / короткий опис</label><input data-key="concept" type="text"></div>
+    <div class="block" data-block-id="defense">
+      <div class="block-title">Захист</div>
+      <div class="block-body">
+        <div class="defense-grid">
+          <div class="defense"><label>Parry</label><input data-key="parry" type="text"></div>
+          <div class="defense"><label>Block</label><input data-key="block" type="text"></div>
+          <div class="defense"><label>Dodge</label><input id="dodgeOverride" data-key="dodgeOverride" type="text" placeholder="авто"></div>
+        </div>
+        <div class="dr-grid">
+          <span>Голова</span><input data-key="drHead" type="text">
+          <span>Торс</span><input data-key="drTorso" type="text">
+          <span>Руки</span><input data-key="drArms" type="text">
+          <span>Кисті</span><input data-key="drHands" type="text">
+          <span>Ноги</span><input data-key="drLegs" type="text">
+          <span>Стопи</span><input data-key="drFeet" type="text">
+        </div>
+        <div class="condition-mini">
+          <div class="field"><label>Навантаження</label>
+            <select data-key="encLevel">
+              <option value="0">Немає</option>
+              <option value="1">Легке</option>
+              <option value="2">Середнє</option>
+              <option value="3">Важке</option>
+              <option value="4">Надтяжке</option>
+            </select>
+          </div>
+          <div class="field"><label>SM</label><input data-key="sm" type="text" placeholder="0"></div>
+        </div>
+      </div>
     </div>
 
-    <div class="portrait" id="portraitBox">
-      <img id="portraitImg" alt="Портрет персонажа">
-      <div class="placeholder" id="portraitPlaceholder">Портрет персонажа<br><small>Натисніть «Завантажити»</small></div>
-      <div class="portrait-actions">
-        <label>Завантажити<input id="portraitInput" type="file" accept="image/*"></label>
-        <button id="removePortrait" type="button">Прибрати</button>
+    <div class="block portrait-card" data-block-id="portrait">
+      <div class="block-title">Портрет</div>
+      <div class="block-body">
+        <div class="portrait">
+          <img id="portraitImg" alt="Портрет персонажа">
+          <div id="portraitPlaceholder" class="portrait-placeholder">Портрет персонажа</div>
+          <div class="portrait-actions">
+            <label>Завантажити<input id="portraitInput" type="file" accept="image/*"></label>
+            <button id="removePortrait" type="button">Прибрати</button>
+          </div>
+        </div>
+        <div class="bio-mini">
+          <div class="field race"><label>Раса / вид</label><input data-key="race" type="text"></div>
+          <div class="field"><label>Зріст</label><input data-key="height" type="text"></div>
+          <div class="field"><label>Вага</label><input data-key="weight" type="text"></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="main-grid">
+  <section class="content-grid">
     <div class="stack">
-      <div class="panel">
-        <div class="panel-title">Характеристики</div>
-        <div class="panel-body">
-          <div class="stats">
-            <div>
-              <div class="stat"><b>ST</b><input data-key="st" class="stat-input" type="number" value="10"><span class="cost" id="stCost">[0]</span></div>
-              <div class="stat"><b>DX</b><input data-key="dx" class="stat-input" type="number" value="10"><span class="cost" id="dxCost">[0]</span></div>
-              <div class="stat"><b>IQ</b><input data-key="iq" class="stat-input" type="number" value="10"><span class="cost" id="iqCost">[0]</span></div>
-              <div class="stat"><b>HT</b><input data-key="ht" class="stat-input" type="number" value="10"><span class="cost" id="htCost">[0]</span></div>
-            </div>
-            <div>
-              <div class="stat"><b>HP</b><input data-key="hp" class="stat-input secondary" type="number" value="10"><span class="cost" id="hpCost">[0]</span></div>
-              <div class="stat"><b>Will</b><input data-key="will" class="stat-input secondary" type="number" value="10"><span class="cost" id="willCost">[0]</span></div>
-              <div class="stat"><b>Per</b><input data-key="per" class="stat-input secondary" type="number" value="10"><span class="cost" id="perCost">[0]</span></div>
-              <div class="stat"><b>FP</b><input data-key="fp" class="stat-input secondary" type="number" value="10"><span class="cost" id="fpCost">[0]</span></div>
-            </div>
-          </div>
-
-          <div class="derived">
-            <div class="box"><span class="mini-label">Basic Lift</span><span id="basicLift" class="value">20</span></div>
-            <div class="box"><span class="mini-label">Basic Speed</span><span id="basicSpeed" class="value">5.00</span></div>
-            <div class="box"><span class="mini-label">Basic Move</span><span id="basicMove" class="value">5</span></div>
-            <div class="box"><span class="mini-label">Dodge</span><span id="dodge" class="value">8</span></div>
-          </div>
-
-          <div class="damage-row">
-            <div class="field"><label>Thrust</label><input data-key="thr" type="text" placeholder="1d-2"></div>
-            <div class="field"><label>Swing</label><input data-key="sw" type="text" placeholder="1d"></div>
-          </div>
-
-          <div class="points-strip">
-            <div class="point-box"><span class="mini-label">Стати</span><span id="statPoints" class="value">0</span></div>
-            <div class="point-box"><span class="mini-label">Перев.</span><span id="advPoints" class="value">0</span></div>
-            <div class="point-box"><span class="mini-label">Недол.</span><span id="disadvPoints" class="value">0</span></div>
-            <div class="point-box"><span class="mini-label">Навички</span><span id="skillPoints" class="value">0</span></div>
-          </div>
-          <div class="point-box" style="margin-top:6px"><span class="mini-label">Разом очок</span><span id="totalPoints" class="value">0</span></div>
+      <div class="block" data-block-id="advantages">
+        <div class="block-title">Переваги та перки</div>
+        <div class="block-body">
+          <div id="advantages" class="list"></div>
+          <button class="add-row" data-add="advantages">+ Додати</button>
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-title">Навантаження</div>
-        <div class="panel-body">
+      <div class="block" data-block-id="disadvantages">
+        <div class="block-title">Недоліки та особливості</div>
+        <div class="block-body">
+          <div id="disadvantages" class="list"></div>
+          <button class="add-row" data-add="disadvantages">+ Додати</button>
+        </div>
+      </div>
+
+      <div class="block" data-block-id="attacks">
+        <div class="block-title">Атаки</div>
+        <div class="block-body small-grid">
+          <div class="field"><label>Ближній бій</label><textarea class="compact-textarea" data-key="meleeAttacks" placeholder="Зброя — навичка — шкода — Reach — Parry"></textarea></div>
+          <div class="field"><label>Дальній бій</label><textarea class="compact-textarea" data-key="rangedAttacks" placeholder="Зброя — навичка — шкода — Acc — дальність"></textarea></div>
+        </div>
+      </div>
+
+      <div class="block" data-block-id="encumbrance">
+        <div class="block-title">Навантаження</div>
+        <div class="block-body">
           <table class="enc-table">
-            <thead><tr><th>Рівень</th><th>Макс. вага</th><th>Move</th><th>Dodge</th></tr></thead>
+            <thead><tr><th>Рівень</th><th>Вага</th><th>Move</th><th>Dodge</th></tr></thead>
             <tbody id="encumbranceBody"></tbody>
           </table>
         </div>
       </div>
-
-      <div class="panel">
-        <div class="panel-title">Захист</div>
-        <div class="panel-body">
-          <div class="combat-grid">
-            <div class="combat-box"><label>Parry</label><input data-key="parry" type="text"></div>
-            <div class="combat-box"><label>Block</label><input data-key="block" type="text"></div>
-            <div class="combat-box"><label>Dodge</label><input data-key="dodgeOverride" type="text" id="dodgeOverride" placeholder="авто"></div>
-          </div>
-          <div class="dr-grid" style="margin-top:8px">
-            <div class="dr-row"><span>Голова</span><input data-key="drHead" type="text"></div>
-            <div class="dr-row"><span>Торс</span><input data-key="drTorso" type="text"></div>
-            <div class="dr-row"><span>Руки</span><input data-key="drArms" type="text"></div>
-            <div class="dr-row"><span>Кисті</span><input data-key="drHands" type="text"></div>
-            <div class="dr-row"><span>Ноги</span><input data-key="drLegs" type="text"></div>
-            <div class="dr-row"><span>Стопи</span><input data-key="drFeet" type="text"></div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <div class="stack">
-      <div class="panel">
-        <div class="panel-title">Переваги та перки</div>
-        <div class="panel-body">
-          <div id="advantages" class="list"></div>
-          <button class="add-row" data-add="advantages">+ Додати перевагу</button>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title">Недоліки та особливості</div>
-        <div class="panel-body">
-          <div id="disadvantages" class="list"></div>
-          <button class="add-row" data-add="disadvantages">+ Додати недолік</button>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title">Реакції та соціальні модифікаторы</div>
-        <div class="panel-body">
-          <div class="field"><label>Статус</label><input data-key="statusText" type="text"></div>
-          <div class="field"><label>Репутація</label><input data-key="reputation" type="text"></div>
-          <div class="field"><label>Модифікатори реакції</label><textarea data-key="reactionMods"></textarea></div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title">Мови та культурні особливості</div>
-        <div class="panel-body">
-          <div class="field"><label>Мови</label><textarea data-key="languages" placeholder="Мова — розмовна / письмова"></textarea></div>
-          <div class="field"><label>Культурні знайомства</label><textarea data-key="cultures"></textarea></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="stack">
-      <div class="panel">
-        <div class="panel-title">Навички</div>
-        <div class="panel-body">
-          <div class="list-row skill" style="padding:0 3px 4px;color:var(--muted);font-size:11px;text-transform:uppercase">
-            <span>Назва</span><span>Рівень</span><span>Відн. рівень</span><span>Очки</span><span></span>
+      <div class="block" data-block-id="skills">
+        <div class="block-title">Навички</div>
+        <div class="block-body">
+          <div class="list-row skill" style="padding:0 2px 3px;color:var(--muted);font-size:10px;text-transform:uppercase">
+            <span>Назва</span><span>Рів.</span><span>Відн.</span><span>Очки</span><span></span>
           </div>
           <div id="skills" class="list"></div>
           <button class="add-row" data-add="skills">+ Додати навичку</button>
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-title">Атаки та зброя</div>
-        <div class="panel-body">
-          <div class="field"><label>Ближній бій</label><textarea data-key="meleeAttacks" placeholder="Зброя — навичка — шкода — reach — parry"></textarea></div>
-          <div class="field"><label>Дальній бій</label><textarea data-key="rangedAttacks" placeholder="Зброя — навичка — шкода — Acc — дальність — RoF"></textarea></div>
+      <div class="block" data-block-id="equipment">
+        <div class="block-title">Спорядження та стан</div>
+        <div class="block-body">
+          <div class="field"><label>Спорядження</label><textarea class="equipment" data-key="equipment" placeholder="Предмет — вага — вартість — примітка"></textarea></div>
+          <div class="field" style="margin-top:7px"><label>Поранення, ефекти, стани</label><textarea class="compact-textarea" data-key="conditions"></textarea></div>
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-title">Стан</div>
-        <div class="panel-body">
-          <div class="combat-grid">
-            <div class="combat-box"><label>Поточні HP</label><input data-key="currentHp" type="number"></div>
-            <div class="combat-box"><label>Поточні FP</label><input data-key="currentFp" type="number"></div>
-            <div class="combat-box"><label>Навантаження</label>
-              <select data-key="encLevel">
-                <option value="0">Немає</option>
-                <option value="1">Легке</option>
-                <option value="2">Середнє</option>
-                <option value="3">Важке</option>
-                <option value="4">Надважке</option>
-              </select>
-            </div>
-          </div>
-          <div class="field" style="margin-top:8px"><label>Стани, ефекти, поранення</label><textarea data-key="conditions"></textarea></div>
+      <div class="block" data-block-id="social">
+        <div class="block-title">Мови та соціальне</div>
+        <div class="block-body small-grid">
+          <div class="field"><label>Мови</label><textarea class="compact-textarea" data-key="languages"></textarea></div>
+          <div class="field"><label>Статус, репутація, реакції</label><textarea class="compact-textarea" data-key="social" placeholder="Статус, репутація, модифікатори реакції"></textarea></div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="notes-grid">
-    <div class="panel big-notes">
-      <div class="panel-title">Спорядження та майно</div>
-      <div class="panel-body"><textarea data-key="equipment" placeholder="Предмет — вага — вартість — замітка"></textarea></div>
+  <details id="journalDetails">
+    <summary>Опис, біографія та журнал</summary>
+    <div class="journal-grid">
+      <div class="field"><label>Опис персонажа</label><textarea data-key="description"></textarea></div>
+      <div class="field"><label>Біографія</label><textarea data-key="biography"></textarea></div>
+      <div class="field journal"><label>Журнал</label><textarea data-key="journal" placeholder="Події кампанії, завдання, NPC, борги, зачіпки..."></textarea></div>
     </div>
-    <div class="panel big-notes">
-      <div class="panel-title">Замітки персонажа</div>
-      <div class="panel-body"><textarea data-key="notes"></textarea></div>
-    </div>
-  </section>
+  </details>
 </main>
 
 <script>
-const STORAGE_KEY = "gurps_character_sheet_v2";
+// ==========================================
+// НАЛАШТУВАННЯ GOOGLE DRIVE API
+// ==========================================
+const CLIENT_ID = 'ВСТАВ_СВІЙ_CLIENT_ID_ТУТ'; // <-- ВСТАВ СВІЙ CLIENT ID СЮДИ!
+const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+const DRIVE_FILE_NAME = 'gurps_character_data.json';
+
+let tokenClient;
+let accessToken = null;
+let driveFileId = null;
+
+const COLLAPSE_KEY = "gurps_character_sheet_collapsed_v1"; // Залишаємо локально лише для UI
+
 const state = {
   fields:{},
   lists:{
@@ -547,72 +708,73 @@ const state = {
   portrait:""
 };
 
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
+const $ = selector => document.querySelector(selector);
+const $$ = selector => [...document.querySelectorAll(selector)];
 let saveTimer;
 
-function num(v, fallback=0){
-  const n = Number(v);
-  return Number.isFinite(n) ? n : fallback;
+function escapeHtml(value){
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
+  })[char]);
 }
-function formatWeight(n){
-  return Number.isInteger(n) ? String(n) : n.toFixed(1).replace(/\.0$/,"");
+function number(value,fallback=0){
+  const result=Number(value);
+  return Number.isFinite(result)?result:fallback;
 }
-function fieldValue(key, fallback=""){
-  const el = document.querySelector(`[data-key="${key}"]`);
-  return el ? el.value : fallback;
+function fieldValue(key,fallback=""){
+  const element=document.querySelector(`[data-key="${key}"]`);
+  return element?element.value:fallback;
+}
+function formatNumber(value){
+  return Number.isInteger(value)?String(value):value.toFixed(1).replace(/\.0$/,"");
 }
 
 function renderList(id){
-  const box = document.getElementById(id);
-  box.innerHTML = "";
+  const container=document.getElementById(id);
+  container.innerHTML="";
   state.lists[id].forEach((item,index)=>{
-    const row = document.createElement("div");
-    row.className = "list-row" + (id==="skills" ? " skill" : "");
+    const row=document.createElement("div");
+    row.className="list-row"+(id==="skills"?" skill":"");
     if(id==="skills"){
-      row.innerHTML = `
+      row.innerHTML=`
         <input data-list="${id}" data-index="${index}" data-prop="name" value="${escapeHtml(item.name||"")}" placeholder="Навичка">
         <input data-list="${id}" data-index="${index}" data-prop="level" value="${escapeHtml(item.level||"")}" placeholder="12">
         <input data-list="${id}" data-index="${index}" data-prop="relative" value="${escapeHtml(item.relative||"")}" placeholder="DX+1">
         <input data-list="${id}" data-index="${index}" data-prop="points" type="number" value="${escapeHtml(item.points||"")}" placeholder="0">
         <button class="remove" data-remove="${id}" data-index="${index}" title="Видалити">×</button>`;
     }else{
-      const placeholder = id==="advantages" ? "Перевага / перк" : "Недолік / особливість";
-      row.innerHTML = `
+      const placeholder=id==="advantages"?"Перевага / перк":"Недолік / особливість";
+      row.innerHTML=`
         <input data-list="${id}" data-index="${index}" data-prop="name" value="${escapeHtml(item.name||"")}" placeholder="${placeholder}">
-        <input data-list="${id}" data-index="${index}" data-prop="points" type="number" value="${escapeHtml(item.points||"")}" placeholder="0">
+        <input data-list="${id}" data-index="${index}" data-prop="points" type="number" value="${escapeHtml(item.points||"")}" placeholder="Очки">
         <button class="remove" data-remove="${id}" data-index="${index}" title="Видалити">×</button>`;
     }
-    box.appendChild(row);
+    container.appendChild(row);
   });
 }
 
-function escapeHtml(v){
-  return String(v).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
-}
+function calculate(){
+  const st=number(fieldValue("st"),10);
+  const dx=number(fieldValue("dx"),10);
+  const iq=number(fieldValue("iq"),10);
+  const ht=number(fieldValue("ht"),10);
+  const hp=number(fieldValue("hp"),st);
+  const will=number(fieldValue("will"),iq);
+  const per=number(fieldValue("per"),iq);
+  const fp=number(fieldValue("fp"),ht);
 
-function calc(){
-  const st = num(fieldValue("st"),10);
-  const dx = num(fieldValue("dx"),10);
-  const iq = num(fieldValue("iq"),10);
-  const ht = num(fieldValue("ht"),10);
-  const hp = num(fieldValue("hp"),st);
-  const will = num(fieldValue("will"),iq);
-  const per = num(fieldValue("per"),iq);
-  const fp = num(fieldValue("fp"),ht);
+  const basicLift=st*st/5;
+  const speed=(dx+ht)/4;
+  const move=Math.floor(speed);
+  const dodge=move+3;
 
-  const bl = st*st/5;
-  const speed = (dx+ht)/4;
-  const move = Math.floor(speed);
-  const dodge = move+3;
+  $("#basicLift").textContent=formatNumber(basicLift);
+  $("#basicSpeed").textContent=speed.toFixed(2);
+  $("#basicMove").textContent=move;
+  $("#dodge").textContent=dodge;
+  $("#dodgeOverride").placeholder="авто: "+dodge;
 
-  $("#basicLift").textContent = formatWeight(bl);
-  $("#basicSpeed").textContent = speed.toFixed(2);
-  $("#basicMove").textContent = move;
-  $("#dodge").textContent = dodge;
-  $("#dodgeOverride").placeholder = "авто: "+dodge;
-
-  const costs = {
+  const costs={
     st:(st-10)*10,
     dx:(dx-10)*20,
     iq:(iq-10)*20,
@@ -622,161 +784,351 @@ function calc(){
     per:(per-iq)*5,
     fp:(fp-ht)*3
   };
-  Object.entries(costs).forEach(([k,v])=>document.getElementById(k+"Cost").textContent=`[${v}]`);
-  const statPoints = Object.values(costs).reduce((a,b)=>a+b,0);
+  Object.entries(costs).forEach(([key,value])=>{
+    document.getElementById(key+"Cost").textContent=`[${value}]`;
+  });
 
-  const adv = state.lists.advantages.reduce((a,x)=>a+num(x.points),0);
-  const disadv = state.lists.disadvantages.reduce((a,x)=>a+num(x.points),0);
-  const skills = state.lists.skills.reduce((a,x)=>a+num(x.points),0);
+  const statPoints=Object.values(costs).reduce((a,b)=>a+b,0);
+  const advantagePoints=state.lists.advantages.reduce((sum,item)=>sum+number(item.points),0);
+  const disadvantagePoints=state.lists.disadvantages.reduce((sum,item)=>sum+number(item.points),0);
+  const skillPoints=state.lists.skills.reduce((sum,item)=>sum+number(item.points),0);
+  $("#totalPoints").textContent=statPoints+advantagePoints+disadvantagePoints+skillPoints;
 
-  $("#statPoints").textContent = statPoints;
-  $("#advPoints").textContent = adv;
-  $("#disadvPoints").textContent = disadv;
-  $("#skillPoints").textContent = skills;
-  $("#totalPoints").textContent = statPoints + adv + disadv + skills;
-
-  const enc = [
+  const rows=[
     ["Немає",1,1,0],
     ["Легке",2,.8,1],
     ["Середнє",3,.6,2],
     ["Важке",6,.4,3],
-    ["Надважке",10,.2,4]
+    ["Надтяжке",10,.2,4]
   ];
-  $("#encumbranceBody").innerHTML = enc.map(([name,mult,moveMult,pen])=>{
-    const m = Math.max(1,Math.floor(move*moveMult));
-    return `<tr><td>${name}</td><td>${formatWeight(bl*mult)}</td><td>${m}</td><td>${Math.max(1,dodge-pen)}</td></tr>`;
+  $("#encumbranceBody").innerHTML=rows.map(([name,multiplier,moveMultiplier,penalty])=>{
+    const rowMove=Math.max(1,Math.floor(move*moveMultiplier));
+    const rowDodge=Math.max(1,dodge-penalty);
+    return `<tr><td>${name}</td><td>${formatNumber(basicLift*multiplier)}</td><td>${rowMove}</td><td>${rowDodge}</td></tr>`;
   }).join("");
 }
 
 function collect(){
-  $$("[data-key]").forEach(el=>state.fields[el.dataset.key]=el.value);
+  $$("[data-key]").forEach(element=>{
+    state.fields[element.dataset.key]=element.value;
+  });
 }
 function apply(){
-  Object.entries(state.fields||{}).forEach(([key,val])=>{
-    const el = document.querySelector(`[data-key="${key}"]`);
-    if(el) el.value = val;
+  Object.entries(state.fields||{}).forEach(([key,value])=>{
+    const element=document.querySelector(`[data-key="${key}"]`);
+    if(element)element.value=value;
   });
   renderList("advantages");
   renderList("disadvantages");
   renderList("skills");
   setPortrait(state.portrait||"");
-  calc();
-}
-function save(silent=false){
-  collect();
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
-  if(!silent){
-    const s=$("#status");
-    s.textContent="Збережено";
-    s.classList.remove("saved-flash"); void s.offsetWidth; s.classList.add("saved-flash");
-  }
-}
-function scheduleSave(){
-  clearTimeout(saveTimer);
-  saveTimer=setTimeout(()=>save(true),350);
-  $("#status").textContent="Зберігаю…";
-  setTimeout(()=>$("#status").textContent="Автозбереження увімкнено",600);
-}
-function setPortrait(src){
-  state.portrait=src||"";
-  const img=$("#portraitImg"), ph=$("#portraitPlaceholder");
-  if(src){img.src=src;img.style.display="block";ph.style.display="none";}
-  else{img.removeAttribute("src");img.style.display="none";ph.style.display="grid";}
+  calculate();
 }
 
-document.addEventListener("input",e=>{
-  const el=e.target;
-  if(el.dataset.key){
-    state.fields[el.dataset.key]=el.value;
-    calc(); scheduleSave();
+// ==========================================
+// ЛОГІКА GOOGLE DRIVE
+// ==========================================
+
+async function findDriveFile() {
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${DRIVE_FILE_NAME}' and trashed=false`, {
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+  const data = await res.json();
+  if (data.files && data.files.length > 0) {
+    return data.files[0].id;
   }
-  if(el.dataset.list){
-    const item=state.lists[el.dataset.list][Number(el.dataset.index)];
-    item[el.dataset.prop]=el.value;
-    calc(); scheduleSave();
+  return null;
+}
+
+async function loadFromDrive() {
+  $("#saveStatus").textContent = "Перевірка Drive...";
+  try {
+    driveFileId = await findDriveFile();
+    if (driveFileId) {
+      $("#saveStatus").textContent = "Завантаження...";
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
+      const imported = await res.json();
+      state.fields = imported.fields || {};
+      state.lists = imported.lists || state.lists;
+      state.portrait = imported.portrait || "";
+      apply();
+      $("#saveStatus").textContent = "Синхронізовано з Drive";
+    } else {
+      $("#saveStatus").textContent = "Створено новий аркуш";
+      apply(); // Пустий аркуш
+    }
+  } catch (error) {
+    console.error(error);
+    $("#saveStatus").textContent = "Помилка завантаження з Drive";
+  }
+}
+
+async function saveToDrive(showMessage = false) {
+  if (!accessToken) return;
+  collect();
+  if (showMessage) $("#saveStatus").textContent = "Зберігаю в Drive...";
+
+  const fileContent = JSON.stringify(state);
+
+  try {
+    if (!driveFileId) {
+      driveFileId = await findDriveFile();
+    }
+
+    if (!driveFileId) {
+      // Створюємо новий файл
+      const metaRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: DRIVE_FILE_NAME })
+      });
+      const meta = await metaRes.json();
+      driveFileId = meta.id;
+    }
+
+    // Оновлюємо вміст файлу
+    await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: fileContent
+    });
+
+    $("#saveStatus").textContent = "Збережено в Google Drive";
+    setTimeout(() => {
+        if($("#saveStatus").textContent === "Збережено в Google Drive") {
+             $("#saveStatus").textContent = "Синхронізовано з Drive";
+        }
+    }, 2000);
+  } catch (error) {
+    console.error(error);
+    $("#saveStatus").textContent = "Помилка збереження в Drive!";
+  }
+}
+
+function scheduleSave(){
+  if (!accessToken) return;
+  clearTimeout(saveTimer);
+  $("#saveStatus").textContent = "Очікування...";
+  // Затримка 3 секунди перед автоматичним відправленням в Drive, щоб не спамити API
+  saveTimer = setTimeout(() => saveToDrive(true), 3000);
+}
+
+window.onload = function () {
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: (tokenResponse) => {
+      if (tokenResponse && tokenResponse.access_token) {
+        accessToken = tokenResponse.access_token;
+        $("#authBtn").style.display = "none";
+        $("#saveBtn").style.display = "inline-block";
+        loadFromDrive();
+      }
+    },
+  });
+  
+  apply();
+  setupCollapsibles();
+};
+
+$("#authBtn").addEventListener("click", () => {
+  if(CLIENT_ID === '1046799060090-ddfgdlkkf71k1fdesfrhtmbfqu66jo5f.apps.googleusercontent.com') {
+    alert("Увага! Ти забув вставити свій Client ID у код.");
+    return;
+  }
+  tokenClient.requestAccessToken();
+});
+
+// ==========================================
+// ПОДІЇ ІНТЕРФЕЙСУ
+// ==========================================
+
+function setPortrait(source){
+  state.portrait=source||"";
+  const image=$("#portraitImg");
+  const placeholder=$("#portraitPlaceholder");
+  if(source){
+    image.src=source;
+    image.style.display="block";
+    placeholder.style.display="none";
+  }else{
+    image.removeAttribute("src");
+    image.style.display="none";
+    placeholder.style.display="grid";
+  }
+}
+
+document.addEventListener("input",event=>{
+  const element=event.target;
+  if(element.dataset.key){
+    state.fields[element.dataset.key]=element.value;
+    calculate();
+    scheduleSave();
+  }
+  if(element.dataset.list){
+    const item=state.lists[element.dataset.list][Number(element.dataset.index)];
+    item[element.dataset.prop]=element.value;
+    calculate();
+    scheduleSave();
   }
 });
 
-document.addEventListener("click",e=>{
-  const add=e.target.dataset.add;
+document.addEventListener("click",event=>{
+  const add=event.target.dataset.add;
   if(add){
     state.lists[add].push(add==="skills"
       ? {name:"",level:"",relative:"",points:""}
       : {name:"",points:""});
-    renderList(add); scheduleSave();
+    renderList(add);
+    scheduleSave();
   }
-  const rem=e.target.dataset.remove;
-  if(rem){
-    const i=Number(e.target.dataset.index);
-    state.lists[rem].splice(i,1);
-    if(!state.lists[rem].length){
-      state.lists[rem].push(rem==="skills"
+
+  const remove=event.target.dataset.remove;
+  if(remove){
+    const index=Number(event.target.dataset.index);
+    state.lists[remove].splice(index,1);
+    if(!state.lists[remove].length){
+      state.lists[remove].push(remove==="skills"
         ? {name:"",level:"",relative:"",points:""}
         : {name:"",points:""});
     }
-    renderList(rem); calc(); scheduleSave();
+    renderList(remove);
+    calculate();
+    scheduleSave();
   }
 });
 
-$("#portraitInput").addEventListener("change",e=>{
-  const file=e.target.files[0];
+$("#portraitInput").addEventListener("change",event=>{
+  const file=event.target.files[0];
   if(!file)return;
   if(file.size>4*1024*1024){
-    alert("Краще використовувати зображення до 4 МБ.");
+    alert("Використовуйте зображення розміром до 4 МБ.");
     return;
   }
   const reader=new FileReader();
-  reader.onload=()=>{setPortrait(reader.result);save(true)};
+  reader.onload=()=>{
+    setPortrait(reader.result);
+    saveToDrive(true);
+  };
   reader.readAsDataURL(file);
 });
-$("#removePortrait").addEventListener("click",()=>{setPortrait("");save(true)});
-$("#saveBtn").addEventListener("click",()=>save(false));
+$("#removePortrait").addEventListener("click",()=>{
+  setPortrait("");
+  saveToDrive(true);
+});
+$("#saveBtn").addEventListener("click",()=>saveToDrive(true));
 $("#printBtn").addEventListener("click",()=>window.print());
 
 $("#exportBtn").addEventListener("click",()=>{
   collect();
   const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download=(fieldValue("name")||"gurps-character").replace(/[^\p{L}\p{N}_-]+/gu,"_")+".json";
-  a.click();
-  URL.revokeObjectURL(a.href);
+  const anchor=document.createElement("a");
+  anchor.href=URL.createObjectURL(blob);
+  anchor.download=(fieldValue("name")||"gurps-character").replace(/[^\p{L}\p{N}_-]+/gu,"_")+".json";
+  anchor.click();
+  URL.revokeObjectURL(anchor.href);
 });
 
-$("#importFile").addEventListener("change",e=>{
-  const file=e.target.files[0];
+$("#importFile").addEventListener("change",event=>{
+  const file=event.target.files[0];
   if(!file)return;
   const reader=new FileReader();
   reader.onload=()=>{
     try{
-      const data=JSON.parse(reader.result);
-      state.fields=data.fields||{};
-      state.lists=data.lists||state.lists;
-      state.portrait=data.portrait||"";
-      apply();save(false);
-    }catch(err){alert("Не вдалося прочитати JSON-файл.");}
+      const imported=JSON.parse(reader.result);
+      state.fields=imported.fields||{};
+      state.lists=imported.lists||state.lists;
+      state.portrait=imported.portrait||"";
+      apply();
+      saveToDrive(true);
+    }catch(error){
+      alert("Не вдалося прочитати JSON-файл.");
+    }
   };
   reader.readAsText(file);
 });
 
 $("#clearBtn").addEventListener("click",()=>{
-  if(!confirm("Очистити весь лист персонажа?"))return;
-  localStorage.removeItem(STORAGE_KEY);
-  location.reload();
+  if(!confirm("Очистити весь аркуш персонажа? Дані будуть скинуті."))return;
+  // Очищуємо стан у пам'яті
+  state.fields = {};
+  state.lists = {
+    advantages:[{name:"",points:""}],
+    disadvantages:[{name:"",points:""}],
+    skills:[{name:"",level:"",relative:"",points:""}]
+  };
+  state.portrait = "";
+  apply();
+  saveToDrive(true); // Перезаписуємо пустим у Drive
 });
 
-(function init(){
-  const saved=localStorage.getItem(STORAGE_KEY);
-  if(saved){
-    try{
-      const parsed=JSON.parse(saved);
-      state.fields=parsed.fields||{};
-      state.lists=parsed.lists||state.lists;
-      state.portrait=parsed.portrait||"";
-    }catch(e){}
+function getCollapsedState(){
+  try{
+    return JSON.parse(localStorage.getItem(COLLAPSE_KEY) || "{}");
+  }catch(error){
+    return {};
   }
-  apply();
-})();
+}
+function saveCollapsedState(map){
+  localStorage.setItem(COLLAPSE_KEY, JSON.stringify(map));
+}
+function setupCollapsibles(){
+  const collapsed = getCollapsedState();
+
+  document.querySelectorAll(".block").forEach((block, index)=>{
+    const id = block.dataset.blockId || ("block_" + index);
+    block.dataset.blockId = id;
+
+    const title = block.querySelector(".block-title");
+    if(!title || title.querySelector(".collapse-btn")) return;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "collapse-btn";
+    btn.setAttribute("aria-label", "Згорнути або розгорнути блок");
+    btn.textContent = "−";
+
+    const sync = () => {
+      const isCollapsed = block.classList.contains("collapsed");
+      btn.textContent = isCollapsed ? "+" : "−";
+      btn.setAttribute("aria-expanded", String(!isCollapsed));
+    };
+
+    if(collapsed[id]) block.classList.add("collapsed");
+    sync();
+
+    btn.addEventListener("click", (event)=>{
+      event.preventDefault();
+      event.stopPropagation();
+      block.classList.toggle("collapsed");
+      collapsed[id] = block.classList.contains("collapsed");
+      saveCollapsedState(collapsed);
+      sync();
+    });
+
+    title.appendChild(btn);
+  });
+
+  const journal = document.getElementById("journalDetails");
+  if(journal && Object.prototype.hasOwnProperty.call(collapsed, "journalDetails")){
+    journal.open = !collapsed["journalDetails"];
+  }
+  if(journal){
+    journal.addEventListener("toggle", ()=>{
+      const current = getCollapsedState();
+      current["journalDetails"] = !journal.open;
+      saveCollapsedState(current);
+    });
+  }
+}
 </script>
 </body>
 </html>
