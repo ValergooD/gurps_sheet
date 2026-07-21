@@ -1,226 +1,782 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GURPS OPFS Character Sheet</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f9; }
-        h1, h2 { color: #333; }
-        .section { background: white; padding: 15px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
-        label { display: block; font-size: 0.9em; margin-bottom: 3px; font-weight: bold; }
-        input[type="text"], input[type="number"] { width: 100%; padding: 5px; box-sizing: border-box; }
-        .row { display: flex; gap: 10px; margin-bottom: 5px; align-items: center; }
-        .row > * { flex: 1; }
-        button { padding: 8px 12px; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 4px; }
-        button:hover { background: #004494; }
-        #totalPoints { font-size: 1.2em; font-weight: bold; color: #b30000; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GURPS — Лист персонажа</title>
+<style>
+:root{
+  --bg:#e8e3d7;
+  --paper:#fffdf6;
+  --ink:#242424;
+  --muted:#6f6a60;
+  --line:#383838;
+  --soft:#d8d1c2;
+  --gold:#a87912;
+  --gold-soft:#f1e2b0;
+  --red:#9b2f2f;
+  --shadow:0 16px 50px rgba(45,35,20,.16);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 15% 0%,rgba(255,255,255,.75),transparent 32%),
+    linear-gradient(135deg,#dcd5c7,#f1eee6);
+  font:14px/1.35 Georgia,"Times New Roman",serif;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.toolbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:10px 16px;
+  color:#fff;
+  background:rgba(34,31,27,.96);
+  box-shadow:0 4px 16px rgba(0,0,0,.2);
+  backdrop-filter:blur(8px);
+}
+.toolbar .title{
+  margin-right:auto;
+  font-weight:700;
+  letter-spacing:.06em;
+  color:#f1d37b;
+}
+.toolbar button,.file-label{
+  border:1px solid #7c735f;
+  border-radius:6px;
+  padding:7px 10px;
+  background:#3b3731;
+  color:#fff;
+}
+.toolbar button:hover,.file-label:hover{background:#50493f}
+.toolbar .danger:hover{background:#733030}
+.file-label input{display:none}
+
+.sheet{
+  width:min(1440px,calc(100% - 28px));
+  margin:22px auto 40px;
+  padding:22px;
+  background:var(--paper);
+  border:1px solid #b8af9f;
+  box-shadow:var(--shadow);
+}
+.header{
+  display:grid;
+  grid-template-columns:250px 1fr 220px;
+  gap:16px;
+  align-items:stretch;
+  margin-bottom:14px;
+}
+.brand{
+  display:flex;flex-direction:column;justify-content:center;
+  min-height:125px;
+  padding:16px;
+  border:3px solid var(--gold);
+  border-radius:14px 4px 14px 4px;
+  background:linear-gradient(145deg,#252b2a,#4e5751);
+  color:#f6d66d;
+  text-align:center;
+  text-shadow:0 2px 0 #000;
+}
+.brand strong{font-size:38px;line-height:1;letter-spacing:.03em}
+.brand span{margin-top:9px;color:#fff;font-size:16px;letter-spacing:.08em}
+
+.identity{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px 12px;
+  align-content:start;
+}
+.field{display:flex;flex-direction:column;gap:3px}
+.field.full{grid-column:1/-1}
+label,.mini-label{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+input[type="text"],input[type="number"],textarea,select{
+  width:100%;
+  border:0;
+  border-bottom:1px solid #777;
+  border-radius:0;
+  padding:5px 4px;
+  color:var(--ink);
+  background:transparent;
+  outline:none;
+}
+input:focus,textarea:focus,select:focus{
+  border-bottom-color:var(--gold);
+  box-shadow:0 1px 0 var(--gold);
+}
+textarea{resize:vertical;min-height:58px}
+
+.portrait{
+  position:relative;
+  min-height:210px;
+  border:2px solid var(--line);
+  overflow:hidden;
+  background:
+    linear-gradient(45deg,#f4f0e6 25%,transparent 25%) 0 0/18px 18px,
+    linear-gradient(-45deg,#f4f0e6 25%,transparent 25%) 0 0/18px 18px,
+    linear-gradient(45deg,transparent 75%,#f4f0e6 75%) 0 0/18px 18px,
+    linear-gradient(-45deg,transparent 75%,#f4f0e6 75%) 0 0/18px 18px;
+}
+.portrait img{
+  width:100%;height:100%;min-height:210px;object-fit:cover;display:none;
+}
+.portrait .placeholder{
+  position:absolute;inset:0;
+  display:grid;place-items:center;
+  padding:20px;text-align:center;
+  color:var(--muted);
+}
+.portrait .portrait-actions{
+  position:absolute;right:6px;bottom:6px;
+  display:flex;gap:5px;
+}
+.portrait button,.portrait label{
+  border:1px solid rgba(255,255,255,.65);
+  border-radius:5px;
+  padding:5px 7px;
+  color:#fff;background:rgba(0,0,0,.62);
+  text-transform:none;letter-spacing:0;font-size:12px;
+}
+.portrait input{display:none}
+
+.main-grid{
+  display:grid;
+  grid-template-columns:310px minmax(0,1fr) minmax(360px,1fr);
+  gap:12px;
+}
+.panel{
+  border:2px solid var(--line);
+  background:rgba(255,255,255,.35);
+}
+.panel-title{
+  padding:5px 8px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(#faf7ef,#eee7d8);
+  font-weight:700;
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:.055em;
+}
+.panel-body{padding:8px}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{
+  display:grid;
+  grid-template-columns:40px 1fr 42px;
+  align-items:center;
+  min-height:54px;
+  border-bottom:1px solid var(--soft);
+}
+.stat b{font-size:26px}
+.stat input{
+  height:44px;
+  border:1px solid var(--line);
+  font-size:25px;
+  text-align:center;
+}
+.stat .cost{padding-left:7px;color:var(--muted);text-align:right}
+
+.derived{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:7px;
+  margin-top:9px;
+}
+.derived .box{
+  border:1px solid var(--line);
+  padding:6px;
+  min-height:54px;
+}
+.value{
+  display:block;
+  margin-top:3px;
+  font:700 21px/1.1 Arial,sans-serif;
+}
+.damage-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:7px;
+}
+.damage-row .field{border:1px solid var(--line);padding:5px}
+.damage-row input{font-size:18px;text-align:center}
+
+.enc-table,.skills-table,.simple-table,.attacks-table{
+  width:100%;
+  border-collapse:collapse;
+}
+.enc-table th,.enc-table td,
+.skills-table th,.skills-table td,
+.simple-table th,.simple-table td,
+.attacks-table th,.attacks-table td{
+  border-bottom:1px solid var(--soft);
+  padding:4px;
+  vertical-align:middle;
+}
+.enc-table th,.skills-table th,.simple-table th,.attacks-table th{
+  color:var(--muted);
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.enc-table td:not(:first-child){text-align:center}
+
+.points-strip{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  margin-top:8px;
+}
+.point-box{
+  border:1px solid var(--line);
+  padding:6px;
+  text-align:center;
+}
+.point-box .value{font-size:18px}
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+.list-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 62px 28px;
+  gap:5px;
+  align-items:center;
+}
+.list-row.skill{
+  grid-template-columns:minmax(0,1fr) 58px 82px 56px 28px;
+}
+.list-row input{border-bottom:1px solid #aaa;padding:4px}
+.remove{
+  width:26px;height:26px;border:0;border-radius:50%;
+  color:#8a2727;background:transparent;font:bold 18px/1 Arial;
+}
+.remove:hover{background:#f1d8d8}
+.add-row{
+  width:100%;
+  margin-top:7px;
+  border:1px dashed #9b927f;
+  padding:6px;
+  color:#665e50;background:#faf7ef;
+}
+.add-row:hover{background:#f2ebdc}
+
+.stack{display:flex;flex-direction:column;gap:12px}
+.combat-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:7px;
+}
+.combat-box{
+  border:1px solid var(--line);
+  padding:7px;
+  text-align:center;
+}
+.combat-box input{font-size:22px;text-align:center}
+.dr-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:5px 10px;
+}
+.dr-row{display:grid;grid-template-columns:1fr 60px;gap:6px;align-items:center}
+.dr-row input{text-align:center}
+
+.notes-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:12px;
+}
+.big-notes textarea{min-height:170px}
+
+.status{
+  margin-left:4px;
+  color:#d8c79a;
+  font-size:12px;
+}
+.saved-flash{animation:flash .6s}
+@keyframes flash{50%{color:#fff}}
+
+@media(max-width:1100px){
+  .header{grid-template-columns:220px 1fr}
+  .portrait{grid-column:1/-1;min-height:260px}
+  .portrait img{min-height:260px}
+  .main-grid{grid-template-columns:1fr 1fr}
+  .main-grid>.stack:last-child{grid-column:1/-1}
+}
+@media(max-width:760px){
+  .sheet{width:100%;margin:0;padding:10px;border:0}
+  .header,.main-grid,.notes-grid{grid-template-columns:1fr}
+  .identity{grid-template-columns:1fr}
+  .portrait{grid-column:auto}
+  .main-grid>.stack:last-child{grid-column:auto}
+  .toolbar{position:static}
+  .list-row.skill{grid-template-columns:minmax(0,1fr) 50px 65px 48px 26px}
+}
+@media print{
+  body{background:#fff}
+  .toolbar,.add-row,.remove,.portrait-actions{display:none!important}
+  .sheet{width:100%;margin:0;padding:8mm;border:0;box-shadow:none}
+  .panel{break-inside:avoid}
+  input,textarea{border-bottom:1px solid #777!important}
+}
+</style>
 </head>
 <body>
+<div class="toolbar">
+  <div class="title">GURPS CHARACTER SHEET</div>
+  <button id="saveBtn">Сохранить</button>
+  <button id="exportBtn">Экспорт JSON</button>
+  <label class="file-label">Импорт JSON<input id="importFile" type="file" accept=".json,application/json"></label>
+  <button id="printBtn">Печать / PDF</button>
+  <button id="clearBtn" class="danger">Очистить</button>
+  <span id="status" class="status">Автосохранение включено</span>
+</div>
 
-    <h1>Лист персонажа GURPS (OPFS)</h1>
-    <div class="section">
-        <span>Загальна кількість витрачених очок: </span>
-        <span id="totalPoints">0</span>
-        <button onclick="exportData()" style="float: right;">Скачати все (JSON)</button>
-    </div>
-
-    <div class="section" id="statsSection">
-        <h2>Характеристики (Stats)</h2>
-        <div class="grid" id="statsGrid"></div>
-    </div>
-
-    <div class="section" id="traitsSection">
-        <h2>Переваги та Недоліки (Traits)</h2>
-        <div id="traitsList"></div>
-        <button onclick="addItem('traits')">+ Додати</button>
+<main class="sheet" id="sheet">
+  <section class="header">
+    <div class="brand">
+      <strong>GURPS</strong>
+      <span>ЛИСТ ПЕРСОНАЖА</span>
     </div>
 
-    <div class="section" id="skillsSection">
-        <h2>Навички (Skills)</h2>
-        <div id="skillsList"></div>
-        <button onclick="addItem('skills')">+ Додати</button>
-    </div>
-    
-    <div class="section" id="spellsSection">
-        <h2>Закляття (Spells)</h2>
-        <div id="spellsList"></div>
-        <button onclick="addItem('spells')">+ Додати</button>
+    <div class="identity">
+      <div class="field"><label>Имя</label><input data-key="name" type="text"></div>
+      <div class="field"><label>Игрок</label><input data-key="player" type="text"></div>
+      <div class="field"><label>Раса / вид</label><input data-key="race" type="text"></div>
+      <div class="field"><label>Возраст</label><input data-key="age" type="text"></div>
+      <div class="field"><label>Рост</label><input data-key="height" type="text"></div>
+      <div class="field"><label>Вес</label><input data-key="weight" type="text"></div>
+      <div class="field"><label>Размер (SM)</label><input data-key="sm" type="text" placeholder="0"></div>
+      <div class="field"><label>TL</label><input data-key="tl" type="text"></div>
+      <div class="field full"><label>Внешность</label><input data-key="appearance" type="text"></div>
+      <div class="field full"><label>Концепт / краткое описание</label><input data-key="concept" type="text"></div>
     </div>
 
-    <div class="section" id="inventorySection">
-        <h2>Інвентар (Inventory)</h2>
-        <div id="inventoryList"></div>
-        <button onclick="addItem('inventory')">+ Додати</button>
+    <div class="portrait" id="portraitBox">
+      <img id="portraitImg" alt="Портрет персонажа">
+      <div class="placeholder" id="portraitPlaceholder">Портрет персонажа<br><small>Нажмите «Загрузить»</small></div>
+      <div class="portrait-actions">
+        <label>Загрузить<input id="portraitInput" type="file" accept="image/*"></label>
+        <button id="removePortrait" type="button">Убрать</button>
+      </div>
     </div>
+  </section>
+
+  <section class="main-grid">
+    <div class="stack">
+      <div class="panel">
+        <div class="panel-title">Характеристики</div>
+        <div class="panel-body">
+          <div class="stats">
+            <div>
+              <div class="stat"><b>ST</b><input data-key="st" class="stat-input" type="number" value="10"><span class="cost" id="stCost">[0]</span></div>
+              <div class="stat"><b>DX</b><input data-key="dx" class="stat-input" type="number" value="10"><span class="cost" id="dxCost">[0]</span></div>
+              <div class="stat"><b>IQ</b><input data-key="iq" class="stat-input" type="number" value="10"><span class="cost" id="iqCost">[0]</span></div>
+              <div class="stat"><b>HT</b><input data-key="ht" class="stat-input" type="number" value="10"><span class="cost" id="htCost">[0]</span></div>
+            </div>
+            <div>
+              <div class="stat"><b>HP</b><input data-key="hp" class="stat-input secondary" type="number" value="10"><span class="cost" id="hpCost">[0]</span></div>
+              <div class="stat"><b>Will</b><input data-key="will" class="stat-input secondary" type="number" value="10"><span class="cost" id="willCost">[0]</span></div>
+              <div class="stat"><b>Per</b><input data-key="per" class="stat-input secondary" type="number" value="10"><span class="cost" id="perCost">[0]</span></div>
+              <div class="stat"><b>FP</b><input data-key="fp" class="stat-input secondary" type="number" value="10"><span class="cost" id="fpCost">[0]</span></div>
+            </div>
+          </div>
+
+          <div class="derived">
+            <div class="box"><span class="mini-label">Basic Lift</span><span id="basicLift" class="value">20</span></div>
+            <div class="box"><span class="mini-label">Basic Speed</span><span id="basicSpeed" class="value">5.00</span></div>
+            <div class="box"><span class="mini-label">Basic Move</span><span id="basicMove" class="value">5</span></div>
+            <div class="box"><span class="mini-label">Dodge</span><span id="dodge" class="value">8</span></div>
+          </div>
+
+          <div class="damage-row">
+            <div class="field"><label>Thrust</label><input data-key="thr" type="text" placeholder="1d-2"></div>
+            <div class="field"><label>Swing</label><input data-key="sw" type="text" placeholder="1d"></div>
+          </div>
+
+          <div class="points-strip">
+            <div class="point-box"><span class="mini-label">Статы</span><span id="statPoints" class="value">0</span></div>
+            <div class="point-box"><span class="mini-label">Преим.</span><span id="advPoints" class="value">0</span></div>
+            <div class="point-box"><span class="mini-label">Недост.</span><span id="disadvPoints" class="value">0</span></div>
+            <div class="point-box"><span class="mini-label">Навыки</span><span id="skillPoints" class="value">0</span></div>
+          </div>
+          <div class="point-box" style="margin-top:6px"><span class="mini-label">Итого очков</span><span id="totalPoints" class="value">0</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Нагрузка</div>
+        <div class="panel-body">
+          <table class="enc-table">
+            <thead><tr><th>Уровень</th><th>Макс. вес</th><th>Move</th><th>Dodge</th></tr></thead>
+            <tbody id="encumbranceBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Защита</div>
+        <div class="panel-body">
+          <div class="combat-grid">
+            <div class="combat-box"><label>Parry</label><input data-key="parry" type="text"></div>
+            <div class="combat-box"><label>Block</label><input data-key="block" type="text"></div>
+            <div class="combat-box"><label>Dodge</label><input data-key="dodgeOverride" type="text" id="dodgeOverride" placeholder="авто"></div>
+          </div>
+          <div class="dr-grid" style="margin-top:8px">
+            <div class="dr-row"><span>Голова</span><input data-key="drHead" type="text"></div>
+            <div class="dr-row"><span>Торс</span><input data-key="drTorso" type="text"></div>
+            <div class="dr-row"><span>Руки</span><input data-key="drArms" type="text"></div>
+            <div class="dr-row"><span>Кисти</span><input data-key="drHands" type="text"></div>
+            <div class="dr-row"><span>Ноги</span><input data-key="drLegs" type="text"></div>
+            <div class="dr-row"><span>Стопы</span><input data-key="drFeet" type="text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="panel">
+        <div class="panel-title">Преимущества и перки</div>
+        <div class="panel-body">
+          <div id="advantages" class="list"></div>
+          <button class="add-row" data-add="advantages">+ Добавить преимущество</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Недостатки и особенности</div>
+        <div class="panel-body">
+          <div id="disadvantages" class="list"></div>
+          <button class="add-row" data-add="disadvantages">+ Добавить недостаток</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Реакции и социальные модификаторы</div>
+        <div class="panel-body">
+          <div class="field"><label>Статус</label><input data-key="statusText" type="text"></div>
+          <div class="field"><label>Репутация</label><input data-key="reputation" type="text"></div>
+          <div class="field"><label>Модификаторы реакции</label><textarea data-key="reactionMods"></textarea></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Языки и культурные особенности</div>
+        <div class="panel-body">
+          <div class="field"><label>Языки</label><textarea data-key="languages" placeholder="Язык — разговорный / письменный"></textarea></div>
+          <div class="field"><label>Культурные знакомства</label><textarea data-key="cultures"></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="panel">
+        <div class="panel-title">Навыки</div>
+        <div class="panel-body">
+          <div class="list-row skill" style="padding:0 3px 4px;color:var(--muted);font-size:11px;text-transform:uppercase">
+            <span>Название</span><span>Уровень</span><span>Отн. уровень</span><span>Очки</span><span></span>
+          </div>
+          <div id="skills" class="list"></div>
+          <button class="add-row" data-add="skills">+ Добавить навык</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Атаки и оружие</div>
+        <div class="panel-body">
+          <div class="field"><label>Ближний бой</label><textarea data-key="meleeAttacks" placeholder="Оружие — навык — урон — reach — parry"></textarea></div>
+          <div class="field"><label>Дальний бой</label><textarea data-key="rangedAttacks" placeholder="Оружие — навык — урон — Acc — дальность — RoF"></textarea></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Состояние</div>
+        <div class="panel-body">
+          <div class="combat-grid">
+            <div class="combat-box"><label>Текущие HP</label><input data-key="currentHp" type="number"></div>
+            <div class="combat-box"><label>Текущие FP</label><input data-key="currentFp" type="number"></div>
+            <div class="combat-box"><label>Нагрузка</label>
+              <select data-key="encLevel">
+                <option value="0">Нет</option>
+                <option value="1">Лёгкая</option>
+                <option value="2">Средняя</option>
+                <option value="3">Тяжёлая</option>
+                <option value="4">Сверхтяжёлая</option>
+              </select>
+            </div>
+          </div>
+          <div class="field" style="margin-top:8px"><label>Состояния, эффекты, ранения</label><textarea data-key="conditions"></textarea></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="notes-grid">
+    <div class="panel big-notes">
+      <div class="panel-title">Снаряжение и имущество</div>
+      <div class="panel-body"><textarea data-key="equipment" placeholder="Предмет — вес — стоимость — заметка"></textarea></div>
+    </div>
+    <div class="panel big-notes">
+      <div class="panel-title">Заметки персонажа</div>
+      <div class="panel-body"><textarea data-key="notes"></textarea></div>
+    </div>
+  </section>
+</main>
 
 <script>
-// Дефолтні дані для ініціалізації
-const defaultData = {
-    stats: {
-        ST: { val: 10, pts: 0 },
-        DX: { val: 14, pts: 80 },
-        IQ: { val: 10, pts: 0 },
-        HT: { val: 12, pts: 20 }
-    },
-    traits: [
-        { name: "Ambidexterity", pts: 5 },
-        { name: "Combat Reflexes", pts: 15 },
-        { name: "Overconfidence", pts: -5 }
-    ],
-    skills: [
-        { name: "Broadsword", level: 16, diff: "DX/A", pts: 8 },
-        { name: "Dual-Weapon Attack (Broadsword)", level: 16, diff: "Tech", pts: 5 },
-        { name: "Tactics", level: 12, diff: "IQ/H", pts: 4 }
-    ],
-    spells: [],
-    inventory: [
-        { name: "Broadsword (Thrusting)", qty: 2, weight: 3 }
-    ]
+const STORAGE_KEY = "gurps_character_sheet_v2";
+const state = {
+  fields:{},
+  lists:{
+    advantages:[{name:"",points:""}],
+    disadvantages:[{name:"",points:""}],
+    skills:[{name:"",level:"",relative:"",points:""}]
+  },
+  portrait:""
 };
 
-let appData = {};
-let opfsRoot;
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+let saveTimer;
 
-async function initOPFS() {
-    try {
-        opfsRoot = await navigator.storage.getDirectory();
-        await loadAllFiles();
-        renderAll();
-        calculatePoints();
-    } catch (e) {
-        alert("Помилка доступу до OPFS. Переконайся, що сторінка відкрита через localhost або HTTPS.");
-        console.error(e);
+function num(v, fallback=0){
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
+}
+function formatWeight(n){
+  return Number.isInteger(n) ? String(n) : n.toFixed(1).replace(/\.0$/,"");
+}
+function fieldValue(key, fallback=""){
+  const el = document.querySelector(`[data-key="${key}"]`);
+  return el ? el.value : fallback;
+}
+
+function renderList(id){
+  const box = document.getElementById(id);
+  box.innerHTML = "";
+  state.lists[id].forEach((item,index)=>{
+    const row = document.createElement("div");
+    row.className = "list-row" + (id==="skills" ? " skill" : "");
+    if(id==="skills"){
+      row.innerHTML = `
+        <input data-list="${id}" data-index="${index}" data-prop="name" value="${escapeHtml(item.name||"")}" placeholder="Навык">
+        <input data-list="${id}" data-index="${index}" data-prop="level" value="${escapeHtml(item.level||"")}" placeholder="12">
+        <input data-list="${id}" data-index="${index}" data-prop="relative" value="${escapeHtml(item.relative||"")}" placeholder="DX+1">
+        <input data-list="${id}" data-index="${index}" data-prop="points" type="number" value="${escapeHtml(item.points||"")}" placeholder="0">
+        <button class="remove" data-remove="${id}" data-index="${index}" title="Удалить">×</button>`;
+    }else{
+      const placeholder = id==="advantages" ? "Преимущество / перк" : "Недостаток / особенность";
+      row.innerHTML = `
+        <input data-list="${id}" data-index="${index}" data-prop="name" value="${escapeHtml(item.name||"")}" placeholder="${placeholder}">
+        <input data-list="${id}" data-index="${index}" data-prop="points" type="number" value="${escapeHtml(item.points||"")}" placeholder="0">
+        <button class="remove" data-remove="${id}" data-index="${index}" title="Удалить">×</button>`;
     }
+    box.appendChild(row);
+  });
 }
 
-async function loadFile(filename, fallback) {
-    try {
-        const fileHandle = await opfsRoot.getFileHandle(filename, { create: true });
-        const file = await fileHandle.getFile();
-        const text = await file.text();
-        return text ? JSON.parse(text) : fallback;
-    } catch (e) {
-        return fallback;
+function escapeHtml(v){
+  return String(v).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
+}
+
+function calc(){
+  const st = num(fieldValue("st"),10);
+  const dx = num(fieldValue("dx"),10);
+  const iq = num(fieldValue("iq"),10);
+  const ht = num(fieldValue("ht"),10);
+  const hp = num(fieldValue("hp"),st);
+  const will = num(fieldValue("will"),iq);
+  const per = num(fieldValue("per"),iq);
+  const fp = num(fieldValue("fp"),ht);
+
+  const bl = st*st/5;
+  const speed = (dx+ht)/4;
+  const move = Math.floor(speed);
+  const dodge = move+3;
+
+  $("#basicLift").textContent = formatWeight(bl);
+  $("#basicSpeed").textContent = speed.toFixed(2);
+  $("#basicMove").textContent = move;
+  $("#dodge").textContent = dodge;
+  $("#dodgeOverride").placeholder = "авто: "+dodge;
+
+  const costs = {
+    st:(st-10)*10,
+    dx:(dx-10)*20,
+    iq:(iq-10)*20,
+    ht:(ht-10)*10,
+    hp:(hp-st)*2,
+    will:(will-iq)*5,
+    per:(per-iq)*5,
+    fp:(fp-ht)*3
+  };
+  Object.entries(costs).forEach(([k,v])=>document.getElementById(k+"Cost").textContent=`[${v}]`);
+  const statPoints = Object.values(costs).reduce((a,b)=>a+b,0);
+
+  const adv = state.lists.advantages.reduce((a,x)=>a+num(x.points),0);
+  const disadv = state.lists.disadvantages.reduce((a,x)=>a+num(x.points),0);
+  const skills = state.lists.skills.reduce((a,x)=>a+num(x.points),0);
+
+  $("#statPoints").textContent = statPoints;
+  $("#advPoints").textContent = adv;
+  $("#disadvPoints").textContent = disadv;
+  $("#skillPoints").textContent = skills;
+  $("#totalPoints").textContent = statPoints + adv + disadv + skills;
+
+  const enc = [
+    ["Нет",1,1,0],
+    ["Лёгкая",2,.8,1],
+    ["Средняя",3,.6,2],
+    ["Тяжёлая",6,.4,3],
+    ["Сверхтяжёлая",10,.2,4]
+  ];
+  $("#encumbranceBody").innerHTML = enc.map(([name,mult,moveMult,pen])=>{
+    const m = Math.max(1,Math.floor(move*moveMult));
+    return `<tr><td>${name}</td><td>${formatWeight(bl*mult)}</td><td>${m}</td><td>${Math.max(1,dodge-pen)}</td></tr>`;
+  }).join("");
+}
+
+function collect(){
+  $$("[data-key]").forEach(el=>state.fields[el.dataset.key]=el.value);
+}
+function apply(){
+  Object.entries(state.fields||{}).forEach(([key,val])=>{
+    const el = document.querySelector(`[data-key="${key}"]`);
+    if(el) el.value = val;
+  });
+  renderList("advantages");
+  renderList("disadvantages");
+  renderList("skills");
+  setPortrait(state.portrait||"");
+  calc();
+}
+function save(silent=false){
+  collect();
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+  if(!silent){
+    const s=$("#status");
+    s.textContent="Сохранено";
+    s.classList.remove("saved-flash"); void s.offsetWidth; s.classList.add("saved-flash");
+  }
+}
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>save(true),350);
+  $("#status").textContent="Сохраняю…";
+  setTimeout(()=>$("#status").textContent="Автосохранение включено",600);
+}
+function setPortrait(src){
+  state.portrait=src||"";
+  const img=$("#portraitImg"), ph=$("#portraitPlaceholder");
+  if(src){img.src=src;img.style.display="block";ph.style.display="none";}
+  else{img.removeAttribute("src");img.style.display="none";ph.style.display="grid";}
+}
+
+document.addEventListener("input",e=>{
+  const el=e.target;
+  if(el.dataset.key){
+    state.fields[el.dataset.key]=el.value;
+    calc(); scheduleSave();
+  }
+  if(el.dataset.list){
+    const item=state.lists[el.dataset.list][Number(el.dataset.index)];
+    item[el.dataset.prop]=el.value;
+    calc(); scheduleSave();
+  }
+});
+
+document.addEventListener("click",e=>{
+  const add=e.target.dataset.add;
+  if(add){
+    state.lists[add].push(add==="skills"
+      ? {name:"",level:"",relative:"",points:""}
+      : {name:"",points:""});
+    renderList(add); scheduleSave();
+  }
+  const rem=e.target.dataset.remove;
+  if(rem){
+    const i=Number(e.target.dataset.index);
+    state.lists[rem].splice(i,1);
+    if(!state.lists[rem].length){
+      state.lists[rem].push(rem==="skills"
+        ? {name:"",level:"",relative:"",points:""}
+        : {name:"",points:""});
     }
-}
+    renderList(rem); calc(); scheduleSave();
+  }
+});
 
-async function saveFile(filename, data) {
-    const fileHandle = await opfsRoot.getFileHandle(filename, { create: true });
-    const writable = await fileHandle.createWritable();
-    await writable.write(JSON.stringify(data, null, 2));
-    await writable.close();
-}
+$("#portraitInput").addEventListener("change",e=>{
+  const file=e.target.files[0];
+  if(!file)return;
+  if(file.size>4*1024*1024){
+    alert("Лучше использовать изображение до 4 МБ.");
+    return;
+  }
+  const reader=new FileReader();
+  reader.onload=()=>{setPortrait(reader.result);save(true)};
+  reader.readAsDataURL(file);
+});
+$("#removePortrait").addEventListener("click",()=>{setPortrait("");save(true)});
+$("#saveBtn").addEventListener("click",()=>save(false));
+$("#printBtn").addEventListener("click",()=>window.print());
 
-async function loadAllFiles() {
-    appData.stats = await loadFile('stats.json', defaultData.stats);
-    appData.traits = await loadFile('traits.json', defaultData.traits);
-    appData.skills = await loadFile('skills.json', defaultData.skills);
-    appData.spells = await loadFile('spells.json', defaultData.spells);
-    appData.inventory = await loadFile('inventory.json', defaultData.inventory);
-}
+$("#exportBtn").addEventListener("click",()=>{
+  collect();
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=(fieldValue("name")||"gurps-character").replace(/[^\p{L}\p{N}_-]+/gu,"_")+".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
 
-async function saveAllFiles() {
-    await saveFile('stats.json', appData.stats);
-    await saveFile('traits.json', appData.traits);
-    await saveFile('skills.json', appData.skills);
-    await saveFile('spells.json', appData.spells);
-    await saveFile('inventory.json', appData.inventory);
-    calculatePoints();
-}
+$("#importFile").addEventListener("change",e=>{
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      state.fields=data.fields||{};
+      state.lists=data.lists||state.lists;
+      state.portrait=data.portrait||"";
+      apply();save(false);
+    }catch(err){alert("Не удалось прочитать JSON-файл.");}
+  };
+  reader.readAsText(file);
+});
 
-function calculatePoints() {
-    let total = 0;
-    // Stats points
-    for (const key in appData.stats) {
-        total += Number(appData.stats[key].pts) || 0;
-    }
-    // Lists points
-    ['traits', 'skills', 'spells'].forEach(category => {
-        appData[category].forEach(item => {
-            total += Number(item.pts) || 0;
-        });
-    });
-    document.getElementById('totalPoints').innerText = total;
-}
+$("#clearBtn").addEventListener("click",()=>{
+  if(!confirm("Очистить весь лист персонажа?"))return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+});
 
-function renderAll() {
-    // Render Stats
-    const statsHtml = Object.keys(appData.stats).map(key => `
-        <div>
-            <label>${key} (Рівень / Очки)</label>
-            <div style="display:flex; gap:5px;">
-                <input type="number" value="${appData.stats[key].val}" onchange="updateStat('${key}', 'val', this.value)">
-                <input type="number" value="${appData.stats[key].pts}" onchange="updateStat('${key}', 'pts', this.value)">
-            </div>
-        </div>
-    `).join('');
-    document.getElementById('statsGrid').innerHTML = statsHtml;
-
-    // Render Lists
-    renderList('traits', ['name', 'pts'], ['Назва (Перевага/Недолік)', 'Очки']);
-    renderList('skills', ['name', 'level', 'diff', 'pts'], ['Назва навички', 'Рівень', 'Складність', 'Очки']);
-    renderList('spells', ['name', 'level', 'pts'], ['Назва закляття', 'Рівень', 'Очки']);
-    renderList('inventory', ['name', 'qty', 'weight'], ['Предмет', 'Кіл-ть', 'Вага']);
-}
-
-function renderList(category, fields, placeholders) {
-    const container = document.getElementById(`${category}List`);
-    container.innerHTML = appData[category].map((item, index) => {
-        const inputs = fields.map((f, i) => 
-            `<input type="${f==='pts'||f==='qty'||f==='weight'||f==='level'?'number':'text'}" 
-             value="${item[f] || ''}" placeholder="${placeholders[i]}" 
-             onchange="updateItem('${category}', ${index}, '${f}', this.value)">`
-        ).join('');
-        return `<div class="row">${inputs} <button onclick="removeItem('${category}', ${index})">X</button></div>`;
-    }).join('');
-}
-
-// Handlers
-function updateStat(stat, field, value) {
-    appData.stats[stat][field] = Number(value);
-    saveAllFiles();
-}
-
-function updateItem(category, index, field, value) {
-    appData[category][index][field] = (field === 'name' || field === 'diff') ? value : Number(value);
-    saveAllFiles();
-}
-
-function addItem(category) {
-    let newItem = {};
-    if (category === 'traits') newItem = { name: "", pts: 0 };
-    if (category === 'skills') newItem = { name: "", level: 10, diff: "", pts: 1 };
-    if (category === 'spells') newItem = { name: "", level: 10, pts: 1 };
-    if (category === 'inventory') newItem = { name: "", qty: 1, weight: 0 };
-    
-    appData[category].push(newItem);
-    renderAll();
-    saveAllFiles();
-}
-
-function removeItem(category, index) {
-    appData[category].splice(index, 1);
-    renderAll();
-    saveAllFiles();
-}
-
-async function exportData() {
-    await loadAllFiles(); // Оновлюємо дані перед склеюванням
-    const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'gurps_character.json';
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-// Старт
-window.onload = initOPFS;
+(function init(){
+  const saved=localStorage.getItem(STORAGE_KEY);
+  if(saved){
+    try{
+      const parsed=JSON.parse(saved);
+      state.fields=parsed.fields||{};
+      state.lists=parsed.lists||state.lists;
+      state.portrait=parsed.portrait||"";
+    }catch(e){}
+  }
+  apply();
+})();
 </script>
-
 </body>
 </html>
